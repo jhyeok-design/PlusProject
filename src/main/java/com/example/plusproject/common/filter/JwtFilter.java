@@ -37,7 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String header = request.getHeader(JwtUtil.AUTHORIZATION);
 
-        //없으면 일단 통과 security로
+        //없으면 일단 통과
         if (header == null || !header.startsWith(JwtUtil.BEARER_PREFIX)) {
             filterChain.doFilter(request, response);
         }
@@ -67,6 +67,7 @@ public class JwtFilter extends OncePerRequestFilter {
                         null,
                         List.of(new SimpleGrantedAuthority("ROLE_" + role.name()))
                 );
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         log.debug("[JWT FILTER] 인증성공 userId:{}, userRole:{}",userId,role);
