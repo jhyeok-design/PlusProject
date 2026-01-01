@@ -2,6 +2,7 @@ package com.example.plusproject.domain.user.entity;
 
 import com.example.plusproject.common.entity.BaseEntity;
 import com.example.plusproject.common.enums.UserRole;
+import com.example.plusproject.domain.user.model.request.UserUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -78,6 +79,15 @@ public class User extends BaseEntity {
         this.role = UserRole.USER;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public void update(UserUpdateRequest request) {
+        this.password = request.getPassword() != null ? request.getPassword() : this.password;
+        this.name = request.getName() != null ? request.getName() : this.name;
+        this.nickname = request.getNickname() != null ? request.getNickname() : this.nickname;
+        this.phone = request.getPhone() != null ? request.getPhone() : this.phone;
+        this.address = request.getAddress() != null ? request.getAddress() : this.address;
+        updateModifiedAt();
     }
 
     public void updateModifiedAt() {

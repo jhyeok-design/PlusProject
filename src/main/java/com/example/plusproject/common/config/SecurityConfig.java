@@ -1,6 +1,9 @@
 package com.example.plusproject.common.config;
 
 import com.example.plusproject.common.filter.JwtFilter;
+import com.example.plusproject.common.model.CommonResponse;
+import com.example.plusproject.common.model.ErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +33,11 @@ public class SecurityConfig {
                 // 세션 차단
                 .sessionManagement(sm ->
                         sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                //인증, 인가 예외처리
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint())
+                        .accessDeniedHandler(jwtAccessDeniedHandler())
+                )
                 // 권한 설정
                 .authorizeHttpRequests(auth -> auth
                     //auth 단은 전부 통과
@@ -55,30 +63,31 @@ public class SecurityConfig {
     //인증 실패시 (401)
     @Bean
     public AuthenticationEntryPoint jwtAuthenticationEntryPoint() {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        ErrorResponse error = new ErrorResponse(401, "인증이 필요합니다.");
+
         return (request, response, authException) -> {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write("""
-                {
-                  "status": 401,
-                  "message": "인증이 필요합니다."
-                }
-            """);
+            response.getWriter().write(
+                    objectMapper.writeValueAsString(error)
+            );
         };
     }
 
     //인가 실패시 (403)
     @Bean
     public AccessDeniedHandler jwtAccessDeniedHandler() {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        ErrorResponse error = new ErrorResponse(403, "인가가 필요합니다.");
         return (request, response, accessDeniedException) -> {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write("""
-                {
-                  "status": 403,
-                  "message": "접근 권한이 없습니다."
-                }
-            """);
+            response.getWriter().write(
+                    objectMapper.writeValueAsString(error)
+            );
         };
     }
 }
