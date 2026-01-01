@@ -5,5 +5,5 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class CreateCommentResponse {
+public class CommentCreateResponse {
 }
