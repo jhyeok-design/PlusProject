@@ -14,7 +14,6 @@ import com.example.plusproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,12 +79,12 @@ public class AuthService {
         if (user.isDeleted()) {
             throw new CustomException(ExceptionCode.USER_ALREADY_DELETED);
         }
-        if (!Objects.equals(String.valueOf(user.getRole()), "ADMIN")) {
-            //비밀번호 검증
-            if (!passwordEncoder.matches(authLoginRequest.getPassword(),user.getPassword())) {
-                throw new CustomException(ExceptionCode.PASSWORD_NOT_MATCH);
-            }
+
+        //비밀번호 검증
+        if (!passwordEncoder.matches(authLoginRequest.getPassword(),user.getPassword())) {
+            throw new CustomException(ExceptionCode.PASSWORD_NOT_MATCH);
         }
+
         //토큰 발급
         String token = jwtUtil.generateToken(user.getId(), user.getRole());
         //리턴
