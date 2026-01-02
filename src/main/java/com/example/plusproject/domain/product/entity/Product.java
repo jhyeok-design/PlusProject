@@ -34,4 +34,12 @@ public class Product extends BaseEntity {
     private boolean isDeleted = false;
 
     public void softDelete() {this.isDeleted = true;}
+
+    // 임시
+    public Product(String name, Long price, String description, Long quantity) {
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.quantity = quantity;
+    }
 }

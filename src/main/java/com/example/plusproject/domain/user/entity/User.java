@@ -44,4 +44,15 @@ public class User extends BaseEntity {
     private boolean isDeleted = false;
 
     public void softDelete() {this.isDeleted = true;}
+
+    // 임시
+    public User(String name, String email, String password, String nickname, String phone, String address, UserRole role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.phone = phone;
+        this.address = address;
+        this.role = role;
+    }
 }

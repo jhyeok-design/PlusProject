@@ -1,9 +1,10 @@
-package com.example.plusproject.domain.reivew.entity;
+package com.example.plusproject.domain.review.entity;
 
 import com.example.plusproject.common.entity.BaseEntity;
 import com.example.plusproject.domain.product.entity.Product;
 import com.example.plusproject.domain.user.entity.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,12 +19,6 @@ public class Review extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
-
-    @Column(nullable = false, length = 1)
-    private Integer score;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -31,4 +26,18 @@ public class Review extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String content;
+
+    @Column(nullable = false, length = 1)
+    @Max(5)
+    private Integer score;
+
+    public Review(User user, Product product, String content, Integer score) {
+        this.user = user;
+        this.product = product;
+        this.content = content;
+        this.score = score;
+    }
 }
