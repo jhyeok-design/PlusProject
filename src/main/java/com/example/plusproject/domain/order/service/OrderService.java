@@ -17,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -80,5 +83,51 @@ public class OrderService {
         if (!order.getUser().getId().equals(user.getId())) {
             throw new CustomException(ExceptionCode.ORDER_ACCESS_DENIED);
         }
+    }
+
+    /**
+     * 유저의 주문 다건 조회
+     */
+    @Transactional(readOnly = true)
+    public List<OrderReadResponse> readAllOrder(AuthUser authUser) {
+
+        // 사용자 존재 여부 / 예외 처리
+        User user = userRepository.findById(authUser.getUserId()).orElseThrow(
+                () -> new CustomException(ExceptionCode.NOT_FOUND_USER)
+        );
+
+        // 해당 유저의 주문 목록 조회
+        List<Order> all = orderRepository.findAllWithUser();
+        List<OrderReadResponse> responseList = new ArrayList<>();
+
+        for (Order order: all) {
+
+            OrderReadResponse response = OrderReadResponse.from(OrderDto.from(order));
+
+            responseList.add(response);
+        }
+
+        return responseList;
+    }
+
+
+    /**
+     * 주문 삭제
+     */
+    @Transactional
+    public void deleteOrder(AuthUser authUser, Long orderId) {
+
+        // 사용자 존재 여부 / 예외 처리
+        User user = userRepository.findById(authUser.getUserId()).orElseThrow(
+                () -> new CustomException(ExceptionCode.NOT_FOUND_USER)
+        );
+
+        // 주문건 조회 / 없으면 예외 처리
+        Order order = orderRepository.findById(orderId).orElseThrow(
+                () -> new CustomException(ExceptionCode.NOT_FOUND_ORDER)
+        );
+
+        // 삭제
+        order.softDelete();
     }
 }

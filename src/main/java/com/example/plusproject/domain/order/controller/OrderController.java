@@ -6,11 +6,14 @@ import com.example.plusproject.domain.order.model.request.OrderCreateRequest;
 import com.example.plusproject.domain.order.model.response.OrderCreateResponse;
 import com.example.plusproject.domain.order.model.response.OrderReadResponse;
 import com.example.plusproject.domain.order.service.OrderService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,7 +32,7 @@ public class OrderController {
     ) {
         OrderCreateResponse response = orderService.createOrder(authUser, request);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.success("주문 생성 성공", response));
+        return ResponseEntity.ok(CommonResponse.success("주문 생성 성공", response));
     }
 
 
@@ -43,7 +46,35 @@ public class OrderController {
     ) {
         OrderReadResponse response = orderService.readOneOrder(authUser, orderId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success("주문 상세 조회 성공", response));
+        return ResponseEntity.ok(CommonResponse.success("주문 상세 조회 성공", response));
+    }
+
+
+    /**
+     * 유저의 주문 다건 조회
+     */
+    @GetMapping
+    public ResponseEntity<CommonResponse<List<OrderReadResponse>>> readAllOrder(
+            @AuthenticationPrincipal AuthUser authUser
+    ) {
+        List<OrderReadResponse> responseList = orderService.readAllOrder(authUser);
+
+        return ResponseEntity.ok(CommonResponse.success("주문 다건 조회 성공", responseList));
+    }
+
+
+    /**
+     * 주문 삭제
+     */
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<CommonResponse<Void>> deleteOrder(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long orderId
+    ) {
+
+        orderService.deleteOrder(authUser, orderId);
+
+        return ResponseEntity.ok(CommonResponse.success("주문 삭제 성공", null));
     }
 
 }
