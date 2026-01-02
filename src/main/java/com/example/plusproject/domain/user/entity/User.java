@@ -31,7 +31,6 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @Column(nullable = false, length = 50)
     private String name;
 
@@ -91,7 +90,6 @@ public class User extends BaseEntity {
         this.address = request.getAddress() != null ? request.getAddress() : this.address;
         updateModifiedAt();
     }
-
     public void updateModifiedAt() {
         this.updatedAt = LocalDateTime.now();
     }
