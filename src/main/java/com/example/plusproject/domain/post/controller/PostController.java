@@ -26,7 +26,7 @@ public class PostController {
 
         PostCreateResponse result = postService.createPost(userId, request);
 
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @GetMapping("/{postId}")
