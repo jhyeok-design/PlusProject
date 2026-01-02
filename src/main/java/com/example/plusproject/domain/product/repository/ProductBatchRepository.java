@@ -21,14 +21,15 @@ public class ProductBatchRepository {
 
         log.info("batchInsert start");
 
-        String sql = "insert into products (name,  price, description, quantity) values (?, ?, ?, ?)";
+        String sql = "insert into products (name,  price, description, quantity, is_deleted) values (?, ?, ?, ?, ?)";
 
-        jdbcTemplate.batchUpdate(sql, productsList, 10000,
+        jdbcTemplate.batchUpdate(sql, productsList, 1000,
                 (ps, product) -> {
                     ps.setString(1, product.getName());
                     ps.setLong(2, product.getPrice());
                     ps.setString(3, product.getDescription());
                     ps.setLong(4, product.getQuantity());
+                    ps.setBoolean(5, false);
                 });
 
         log.info("BatchInsert end");

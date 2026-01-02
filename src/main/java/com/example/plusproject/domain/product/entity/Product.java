@@ -1,6 +1,8 @@
 package com.example.plusproject.domain.product.entity;
 
 import com.example.plusproject.common.entity.BaseEntity;
+import com.example.plusproject.common.enums.ExceptionCode;
+import com.example.plusproject.common.exception.CustomException;
 import com.example.plusproject.domain.product.model.request.ProductUpdateRequest;
 import com.example.plusproject.domain.user.model.request.UserUpdateRequest;
 import jakarta.persistence.*;
@@ -50,4 +52,12 @@ public class Product extends BaseEntity {
     }
 
     public void softDelete() {this.isDeleted = true;}
+
+    // 주문시 재고 -1
+    public void decreaseQuantity() {
+        if (this.quantity <= 0) {
+            throw new CustomException(ExceptionCode.OUT_OF_STOCK);
+        }
+        this.quantity--;
+    }
 }
