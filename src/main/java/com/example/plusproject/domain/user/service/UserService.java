@@ -68,6 +68,6 @@ public class UserService {
 
         user.delete();
 
-//        return new CommonResponse<>(true,"회원 탈퇴가 완료되었습니다", null);
+        return new CommonResponse<>(true,"회원 탈퇴가 완료되었습니다", null);
     }
 }

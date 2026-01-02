@@ -9,6 +9,7 @@ import com.example.plusproject.domain.review.entity.Review;
 import com.example.plusproject.domain.review.model.ReviewDto;
 import com.example.plusproject.domain.review.model.request.ReviewCreateRequest;
 import com.example.plusproject.domain.review.model.response.ReviewCreateResponse;
+import com.example.plusproject.domain.review.model.response.ReviewReadResponse;
 import com.example.plusproject.domain.review.repository.ReviewRepository;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.repository.UserRepository;
@@ -30,22 +31,37 @@ public class ReviewService {
     @Transactional
     public ReviewCreateResponse createReview(AuthUser authUser, ReviewCreateRequest request) {
 
-        // 유저 존재 여부 검증
+        // 유저 존재 여부 검증 및 유저 가져오기
         User user = userRepository.findById(authUser.getUserId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
 
-        // 상품 존재 여부 검증
+        // 상품 존재 여부 검증 및 상품 가져오기
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT));
 
-        Review review = new Review(
+        Review savedReview = new Review(
                 user,
                 product,
                 request.getContent(),
                 request.getScore());
 
-        ReviewDto savedReview = ReviewDto.from(reviewRepository.save(review));
+        ReviewDto savedReviewDto = ReviewDto.from(reviewRepository.save(savedReview));
 
-        return ReviewCreateResponse.from(savedReview);
+        return ReviewCreateResponse.from(savedReviewDto);
+    }
+
+    /**
+     * 리뷰 단 건 조회 비즈니스 로직
+     */
+    @Transactional(readOnly = true)
+    public ReviewReadResponse readReview(Long reviewId) {
+
+        // 리뷰 존재 여부 검증
+        Review foundReview = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_REVIEW));
+
+        ReviewDto foundReviewDto = ReviewDto.from(foundReview);
+
+        return ReviewReadResponse.from(foundReviewDto);
     }
 }

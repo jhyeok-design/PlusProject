@@ -34,6 +34,9 @@ public class Review extends BaseEntity {
     @Max(5)
     private Integer score;
 
+    @Column(nullable = false, name = "is_deleted", columnDefinition = "TINYINT(1)")
+    private boolean isDeleted = false;
+
     public Review(User user, Product product, String content, Integer score) {
         this.user = user;
         this.product = product;
