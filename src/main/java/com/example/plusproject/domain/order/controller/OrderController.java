@@ -36,7 +36,7 @@ public class OrderController {
     /**
      * 주문 상세 조회
      */
-    @GetMapping()
+    @GetMapping("/{orderId}")
     public ResponseEntity<CommonResponse<OrderReadResponse>> readOneOrder(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long orderId

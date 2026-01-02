@@ -30,21 +30,24 @@ public class OrderService {
      */
     @Transactional
     public OrderCreateResponse createOrder(AuthUser authUser, OrderCreateRequest request) {
-        // 1. 사용자 조회 / 없으면 예외 처리
+        // 사용자 조회 / 없으면 예외 처리
         User user = userRepository.findById(authUser.getUserId()).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_USER)
         );
 
-        // 2. request의 상품 조회 / 없으면 예외 처리
+        // request의 상품 조회 / 없으면 예외 처리
         Product product = productRepository.findByName(request.getProductName()).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT)
         );
 
-        // 3. 주문 생성 및 저장
-        Order order = new Order(product, user);
+        // 상품 재고 소진시
+        product.decreaseQuantity();
+
+        // 주문 생성 및 저장
+        Order order = new Order(request.getProductName(), user, product);
         orderRepository.save(order);
 
-        // 4. 반환
+        // 반환
         return OrderCreateResponse.from(OrderDto.from(order));
     }
 
@@ -55,20 +58,20 @@ public class OrderService {
     @Transactional(readOnly = true)
     public OrderReadResponse readOneOrder(AuthUser authUser, Long orderId) {
 
-        // 1. 사용자 조회 / 없으면 예외 처리
+        // 사용자 조회 / 없으면 예외 처리
         User user = userRepository.findById(authUser.getUserId()).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_USER)
         );
 
-        // 2. 주문건 조회 / 없으면 예외 처리
+        // 주문건 조회 / 없으면 예외 처리
         Order order = orderRepository.findById(orderId).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_ORDER)
         );
 
-        // 3. 주문건이 해당 사용자의 것이 맞는지 / 아니면 예외 처리
+        // 주문건이 해당 사용자의 것이 맞는지 / 아니면 예외 처리
         isOwnedBy(order, user);
 
-        // 4. 응답 값 반환
+        // 응답 값 반환
         return OrderReadResponse.from(OrderDto.from(order));
     }
 

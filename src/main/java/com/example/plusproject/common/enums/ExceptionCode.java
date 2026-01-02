@@ -26,6 +26,7 @@ public enum ExceptionCode {
 
     // 상품 존재 여부
     EXISTS_PRODUCT_NAME(HttpStatus.CONFLICT, "이미 사용중인 상품명 입니다."),
+    OUT_OF_STOCK(HttpStatus.CONFLICT, "상품 재고가 부족합니다."),
 
     NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
     ;
