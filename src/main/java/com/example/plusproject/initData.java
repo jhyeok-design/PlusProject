@@ -3,6 +3,7 @@ package com.example.plusproject;
 import com.example.plusproject.common.enums.UserRole;
 import com.example.plusproject.domain.post.entity.Post;
 import com.example.plusproject.domain.post.repository.PostRepository;
+import com.example.plusproject.common.util.PasswordEncoder;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 public class initData {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final PostRepository postRepository;
 
     @PostConstruct
@@ -22,7 +24,7 @@ public class initData {
     public void init(){
         User admin = new User("관리자",
                 "admin@example.com",
-                "admin123",
+                passwordEncoder.encode("admin123"),
                 "admin",
                 "01012345678",
                 "서울특별시 중구",

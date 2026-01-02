@@ -2,6 +2,7 @@ package com.example.plusproject.domain.post.service;
 
 import com.example.plusproject.common.enums.ExceptionCode;
 import com.example.plusproject.common.exception.CustomException;
+import com.example.plusproject.common.model.AuthUser;
 import com.example.plusproject.domain.comment.repository.CommentRepository;
 import com.example.plusproject.domain.post.entity.Post;
 import com.example.plusproject.domain.post.model.PostDto;
@@ -28,9 +29,9 @@ public class PostService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public PostCreateResponse createPost(Long userId, PostCreateRequest request) {
+    public PostCreateResponse createPost(AuthUser authUser, PostCreateRequest request) {
 
-        User user = userRepository.findById(userId).orElseThrow(
+        User user = userRepository.findById(authUser.getUserId()).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_USER)
         );
 
@@ -65,10 +66,9 @@ public class PostService {
     }
 
     @Transactional
-    public PostUpdateResponse updatePost(Long postId, PostUpdateRequest request) {
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new CustomException(ExceptionCode.NOT_FOUND_POST)
-        );
+    public PostUpdateResponse updatePost(Long postId, AuthUser authUser,PostUpdateRequest request) {
+
+        Post post =getPostWithPermission(postId, authUser.getUserId());
 
         post.update(
                 request.getTitle(),
@@ -80,11 +80,24 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePost(Long postId) {
-        if (!postRepository.existsById(postId)) {
-            throw new CustomException(ExceptionCode.NOT_FOUND_POST);
+    public void deletePost(Long postId, AuthUser authUser) {
+
+        Post post =getPostWithPermission(postId, authUser.getUserId());
+
+        postRepository.delete(post);
+    }
+
+
+    private Post getPostWithPermission(Long postId, Long userId){
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new CustomException(ExceptionCode.NOT_FOUND_POST)
+        );
+
+
+        if (!post.getUser().getId().equals(userId)) {
+            throw new CustomException(ExceptionCode.NO_PERMISSION);
         }
 
-        postRepository.deleteById(postId);
+        return post;
     }
 }

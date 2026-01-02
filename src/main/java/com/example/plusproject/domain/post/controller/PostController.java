@@ -1,17 +1,21 @@
 package com.example.plusproject.domain.post.controller;
 
 
+import com.example.plusproject.common.model.AuthUser;
+import com.example.plusproject.common.model.CommonResponse;
 import com.example.plusproject.domain.post.model.request.PostCreateRequest;
 import com.example.plusproject.domain.post.model.request.PostUpdateRequest;
 import com.example.plusproject.domain.post.model.response.PostCreateResponse;
 import com.example.plusproject.domain.post.model.response.PostGetResponse;
 import com.example.plusproject.domain.post.model.response.PostUpdateResponse;
 import com.example.plusproject.domain.post.service.PostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,44 +25,59 @@ public class PostController {
 
     private final PostService postService;
 
+    /*
+     * 게시글 생성
+     * */
     @PostMapping
-    public ResponseEntity<PostCreateResponse> createPost(@RequestParam Long userId, @RequestBody PostCreateRequest request) {
+    public ResponseEntity<CommonResponse<PostCreateResponse>> createPost(@AuthenticationPrincipal AuthUser authUser,  @Valid @RequestBody PostCreateRequest request) {
 
-        PostCreateResponse result = postService.createPost(userId, request);
+        PostCreateResponse result = postService.createPost(authUser, request);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.success("게시글 작성 완료", result));
     }
 
+    /*
+     * 게시글 단건 조회
+     * */
     @GetMapping("/{postId}")
-    public ResponseEntity<PostGetResponse> getPost(@PathVariable Long postId) {
+    public ResponseEntity<CommonResponse<PostGetResponse>> getPost(@PathVariable Long postId) {
 
         PostGetResponse result = postService.getPost(postId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return ResponseEntity.ok(CommonResponse.success("게시글 단건 조회 완료", result));
     }
 
+    /*
+     * 게시글 다건 조회
+     * */
     @GetMapping
-    public ResponseEntity<Page<PostGetResponse>> getPostList(Pageable pageable) {
+    public ResponseEntity<CommonResponse<Page<PostGetResponse>>> getPostList(Pageable pageable) {
 
         Page<PostGetResponse> result = postService.getPostList(pageable);
 
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return ResponseEntity.ok(CommonResponse.success("게시글 전체 조회 완료", result));
     }
 
-    @PutMapping("/{postId}")
-    public ResponseEntity<PostUpdateResponse> updatePost(@PathVariable Long postId, @RequestBody PostUpdateRequest request) {
+    /*
+     * 게시글 수정
+     * */
+    @PatchMapping("/{postId}")
+    public ResponseEntity<CommonResponse<PostUpdateResponse>> updatePost(@PathVariable Long postId, @AuthenticationPrincipal AuthUser authUser, @Valid @RequestBody PostUpdateRequest request) {
 
-        PostUpdateResponse result = postService.updatePost(postId, request);
+        PostUpdateResponse result = postService.updatePost(postId, authUser, request);
 
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return ResponseEntity.ok(CommonResponse.success("게시글 수정 완료", result));
     }
 
+    /*
+     * 게시글 삭제
+     * */
     @DeleteMapping("/{postId}")
-    public ResponseEntity<String> deletePost(@PathVariable Long postId) {
+    public ResponseEntity<CommonResponse<Void>> deletePost(@PathVariable Long postId, @AuthenticationPrincipal AuthUser authUser) {
 
-        postService.deletePost(postId);
+        postService.deletePost(postId, authUser);
 
-        return ResponseEntity.status(HttpStatus.OK).body("게시글 삭제 완료");
+        return ResponseEntity.ok(CommonResponse.success("게시글 삭제 완료", null));
     }
 
 }
