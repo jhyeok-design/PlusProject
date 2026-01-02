@@ -40,6 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
         //없으면 일단 통과
         if (header == null || !header.startsWith(JwtUtil.BEARER_PREFIX)) {
             filterChain.doFilter(request, response);
+            return; //리턴 추가 401 에러시 NPE 방지
         }
         //bearer 제거
         String token = Objects.requireNonNull(header).substring(JwtUtil.BEARER_PREFIX.length());
