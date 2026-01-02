@@ -2,8 +2,7 @@ package com.example.plusproject.domain.review.service;
 
 import com.example.plusproject.common.enums.ExceptionCode;
 import com.example.plusproject.common.exception.CustomException;
-import com.example.plusproject.common.exception.GlobalExceptionHandler;
-import com.example.plusproject.common.model.CommonResponse;
+import com.example.plusproject.common.model.AuthUser;
 import com.example.plusproject.domain.product.entity.Product;
 import com.example.plusproject.domain.product.repository.ProductRepository;
 import com.example.plusproject.domain.review.entity.Review;
@@ -29,10 +28,10 @@ public class ReviewService {
      * 리뷰 생성 비즈니스 로직
      */
     @Transactional
-    public ReviewCreateResponse createReview(ReviewCreateRequest request) {
+    public ReviewCreateResponse createReview(AuthUser authUser, ReviewCreateRequest request) {
 
         // 유저 존재 여부 검증
-        User user = userRepository.findById(request.getUserId())
+        User user = userRepository.findById(authUser.getUserId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
 
         // 상품 존재 여부 검증

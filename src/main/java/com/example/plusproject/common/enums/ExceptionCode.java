@@ -16,7 +16,10 @@ public enum ExceptionCode {
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST,"패스워드가 일치하지 않습니다"),
 
     INVALID_TOKEN(HttpStatus.NOT_FOUND,"토큰이 없습니다"),
-    MATCHES_PASSWORD(HttpStatus.BAD_REQUEST, "동일한 비밀번호로는 변경할 수 없습니다");
+    MATCHES_PASSWORD(HttpStatus.BAD_REQUEST, "동일한 비밀번호로는 변경할 수 없습니다"),
+
+    NOT_FOUND_PRODUCT(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
+    ;
 
     private final HttpStatus status;
     private final String message;
