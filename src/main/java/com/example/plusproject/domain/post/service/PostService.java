@@ -3,12 +3,14 @@ package com.example.plusproject.domain.post.service;
 import com.example.plusproject.common.enums.ExceptionCode;
 import com.example.plusproject.common.exception.CustomException;
 import com.example.plusproject.common.model.AuthUser;
+import com.example.plusproject.domain.comment.model.response.CommentReadResponse;
 import com.example.plusproject.domain.comment.repository.CommentRepository;
 import com.example.plusproject.domain.post.entity.Post;
 import com.example.plusproject.domain.post.model.PostDto;
 import com.example.plusproject.domain.post.model.request.PostCreateRequest;
 import com.example.plusproject.domain.post.model.request.PostUpdateRequest;
 import com.example.plusproject.domain.post.model.response.PostCreateResponse;
+import com.example.plusproject.domain.post.model.response.PostDetailResponse;
 import com.example.plusproject.domain.post.model.response.PostReadResponse;
 import com.example.plusproject.domain.post.model.response.PostUpdateResponse;
 import com.example.plusproject.domain.post.repository.PostRepository;
@@ -19,6 +21,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -45,20 +49,26 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public PostReadResponse getPost(Long postId) {
+    public PostDetailResponse readPost(Long postId) {
 
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_POST)
         );
 
-        PostDto dto = PostDto.from(post);
+        List<CommentReadResponse> comments = commentRepository
+                .findAllByPostIdOrderByCreatedAtDesc(postId)
+                .stream()
+                .map(CommentReadResponse::from)
+                .toList();
 
-        return PostReadResponse.from(dto);
+        PostReadResponse dto = PostReadResponse.from(PostDto.from(post));
+
+        return PostDetailResponse.from(dto, comments);
 
     }
 
     @Transactional(readOnly = true)
-    public Page<PostReadResponse> getPostList(Pageable pageable) {
+    public Page<PostReadResponse> readPostList(Pageable pageable) {
 
         Page<PostDto> page = postRepository.findPostList(pageable);
 
@@ -66,9 +76,9 @@ public class PostService {
     }
 
     @Transactional
-    public PostUpdateResponse updatePost(Long postId, AuthUser authUser,PostUpdateRequest request) {
+    public PostUpdateResponse updatePost(Long postId, AuthUser authUser, PostUpdateRequest request) {
 
-        Post post =getPostWithPermission(postId, authUser.getUserId());
+        Post post = getPostWithPermission(postId, authUser.getUserId());
 
         post.update(
                 request.getTitle(),
@@ -82,13 +92,14 @@ public class PostService {
     @Transactional
     public void deletePost(Long postId, AuthUser authUser) {
 
-        Post post =getPostWithPermission(postId, authUser.getUserId());
+        Post post = getPostWithPermission(postId, authUser.getUserId());
 
+        commentRepository.deleteByPostId(postId);
         postRepository.delete(post);
     }
 
 
-    private Post getPostWithPermission(Long postId, Long userId){
+    private Post getPostWithPermission(Long postId, Long userId) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_POST)
         );

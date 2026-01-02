@@ -2,6 +2,7 @@ package com.example.plusproject.domain.comment.service;
 
 import com.example.plusproject.common.enums.ExceptionCode;
 import com.example.plusproject.common.exception.CustomException;
+import com.example.plusproject.common.model.AuthUser;
 import com.example.plusproject.domain.comment.entity.Comment;
 import com.example.plusproject.domain.comment.model.CommentDto;
 import com.example.plusproject.domain.comment.model.request.CommentCreateRequest;
@@ -29,9 +30,9 @@ public class CommentService {
     private final UserRepository userRepository;
 
     @Transactional
-    public CommentCreateResponse createComment(Long userId, Long postId, CommentCreateRequest request) {
+    public CommentCreateResponse createComment(AuthUser authUser, Long postId, CommentCreateRequest request) {
 
-        User user = userRepository.findById(userId).orElseThrow(
+        User user = userRepository.findById(authUser.getUserId()).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_USER)
         );
 
@@ -46,8 +47,9 @@ public class CommentService {
         CommentDto dto = CommentDto.from(comment);
         return CommentCreateResponse.from(dto);
     }
+
     @Transactional(readOnly = true)
-    public Page<CommentReadResponse> getCommentList(Long postId, Pageable pageable) {
+    public Page<CommentReadResponse> readCommentList(Long postId, Pageable pageable) {
 
         Page<CommentDto> page = commentRepository.findCommentList(postId, pageable);
         return page
@@ -55,10 +57,8 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentUpdateResponse updateComment(Long commentId, CommentUpdateRequest request) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new CustomException(ExceptionCode.NOT_FOUND_COMMENT)
-        );
+    public CommentUpdateResponse updateComment(Long commentId, AuthUser authUser, CommentUpdateRequest request) {
+        Comment comment = getCommentWithPermission(commentId, authUser.getUserId());
 
         comment.update(request.getContent());
 
@@ -68,10 +68,22 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId) {
-        if (!commentRepository.existsById(commentId)) {
-            throw new CustomException(ExceptionCode.NOT_FOUND_COMMENT);
+    public void deleteComment(Long commentId, AuthUser authUser) {
+
+        Comment comment = getCommentWithPermission(commentId, authUser.getUserId());
+
+        commentRepository.delete(comment);
+    }
+
+    private Comment getCommentWithPermission(Long commentId, Long userId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new CustomException(ExceptionCode.NOT_FOUND_COMMENT)
+        );
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new CustomException(ExceptionCode.NO_PERMISSION);
         }
-        commentRepository.deleteById(commentId);
+
+        return comment;
     }
 }
