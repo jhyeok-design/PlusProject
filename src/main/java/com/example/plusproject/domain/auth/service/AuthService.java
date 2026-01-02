@@ -2,7 +2,6 @@ package com.example.plusproject.domain.auth.service;
 
 import com.example.plusproject.common.enums.ExceptionCode;
 import com.example.plusproject.common.exception.CustomException;
-import com.example.plusproject.common.model.CommonResponse;
 import com.example.plusproject.common.util.JwtUtil;
 import com.example.plusproject.common.util.PasswordEncoder;
 import com.example.plusproject.domain.auth.model.request.AuthLoginRequest;
@@ -17,7 +16,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor

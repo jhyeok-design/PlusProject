@@ -2,7 +2,6 @@ package com.example.plusproject.domain.user.service;
 
 import com.example.plusproject.common.exception.CustomException;
 import com.example.plusproject.common.model.AuthUser;
-import com.example.plusproject.common.model.CommonResponse;
 import com.example.plusproject.common.util.PasswordEncoder;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.model.request.UserUpdateRequest;
