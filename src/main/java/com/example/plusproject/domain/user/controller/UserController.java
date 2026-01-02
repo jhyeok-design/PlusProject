@@ -19,18 +19,30 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<CommonResponse<UserReadResponse>> mypage(@AuthenticationPrincipal AuthUser authUser) {
-        return ResponseEntity.ok(userService.myPage(authUser));
+    public ResponseEntity<CommonResponse<UserReadResponse>> readUser(@AuthenticationPrincipal AuthUser authUser) {
+
+        return ResponseEntity.ok(new CommonResponse<>(true,
+                "마이페이지 조회 성공",
+                userService.readMypage(authUser))
+        );
     }
 
     @PutMapping
-    public ResponseEntity<CommonResponse<UserUpdateResponse>> infoUpdate(@AuthenticationPrincipal AuthUser authUser,
+    public ResponseEntity<CommonResponse<UserUpdateResponse>> updateUser(@AuthenticationPrincipal AuthUser authUser,
                                                                          @RequestBody UserUpdateRequest userUpdateRequest) {
-        return ResponseEntity.ok(userService.infoUpdate(authUser, userUpdateRequest));
+
+        return ResponseEntity.ok(new CommonResponse<>(true,
+                "회원 정보 수정이 완료되었습니다",
+                userService.updateUser(authUser, userUpdateRequest))
+        );
     }
 
     @DeleteMapping("/me")
     public ResponseEntity<CommonResponse<?>> deleteUser(@AuthenticationPrincipal AuthUser authUser) {
-        return ResponseEntity.ok(userService.deleteUser(authUser));
+
+        return ResponseEntity.ok(new CommonResponse<>(true,
+                "회원 탈퇴가 완료되었습니다",
+                null)
+        );
     }
 }

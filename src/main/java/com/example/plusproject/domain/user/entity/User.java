@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
         )
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLRestriction("is_deleted = false")   //SqlRestriction 추가
+@SQLRestriction("is_deleted = false")
 public class User extends BaseEntity {
 
     @Id

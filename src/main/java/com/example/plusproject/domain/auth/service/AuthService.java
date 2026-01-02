@@ -28,7 +28,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public CommonResponse<AuthSignupResponse> signUp(AuthSignupRequest authSignupRequest) {
+    public AuthSignupResponse signUp(AuthSignupRequest authSignupRequest) {
         //email, phone 유니크인지 확인
         boolean emailChk = userRepository.existsByEmail(authSignupRequest.getEmail());
         boolean phoneChk = userRepository.existsByPhone(authSignupRequest.getPhone());
@@ -67,7 +67,7 @@ public class AuthService {
         }
 
         //리턴
-        return new CommonResponse<>(true,"회원가입이 완료되었습니다.",AuthSignupResponse.from(user));
+        return AuthSignupResponse.from(user);
     }
 
     @Transactional

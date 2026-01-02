@@ -23,16 +23,16 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public CommonResponse<UserReadResponse> myPage(AuthUser authUser) {
+    public UserReadResponse readMypage(AuthUser authUser) {
 
         User user = userRepository.findById(authUser.getUserId())
                 .orElseThrow(()->new CustomException(NOT_FOUND_USER));
 
-        return new CommonResponse<>(true,"마이페이지 조회 성공", UserReadResponse.from(user));
+        return UserReadResponse.from(user);
     }
 
     @Transactional
-    public CommonResponse<UserUpdateResponse> infoUpdate(AuthUser authUser, UserUpdateRequest userUpdateRequest) {
+    public UserUpdateResponse updateUser(AuthUser authUser, UserUpdateRequest userUpdateRequest) {
         // 유저 확인
         User user = userRepository.findById(authUser.getUserId())
                 .orElseThrow(()->new CustomException(NOT_FOUND_USER));
@@ -54,11 +54,11 @@ public class UserService {
 
         user.update(userUpdateRequest);
 
-        return new CommonResponse<>(true, "회원 정보 수정이 완료되었습니다", UserUpdateResponse.from(user));
+        return UserUpdateResponse.from(user);
     }
 
     @Transactional
-    public CommonResponse<Void> deleteUser(AuthUser authUser) {
+    public void deleteUser(AuthUser authUser) {
 
         User user = userRepository.findById(authUser.getUserId())
                 .orElseThrow(()->new CustomException(NOT_FOUND_USER));

@@ -1,7 +1,6 @@
-package com.example.plusproject.domain.comment.entity;
+package com.example.plusproject.domain.post.entity;
 
 import com.example.plusproject.common.entity.BaseEntity;
-import com.example.plusproject.domain.post.entity.Post;
 import com.example.plusproject.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -10,13 +9,16 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "comments")
+@Table(name = "posts")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment extends BaseEntity {
+public class Post extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, length = 100)
+    private String title;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
@@ -24,8 +26,4 @@ public class Comment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
 }
