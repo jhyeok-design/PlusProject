@@ -1,6 +1,8 @@
 package com.example.plusproject.domain.product.entity;
 
 import com.example.plusproject.common.entity.BaseEntity;
+import com.example.plusproject.domain.product.model.request.ProductUpdateRequest;
+import com.example.plusproject.domain.user.model.request.UserUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -38,6 +40,13 @@ public class Product extends BaseEntity {
         this.price = price;
         this.description = description;
         this.quantity = quantity;
+    }
+
+    public void update(ProductUpdateRequest request) {
+        this.name = request.getName() != null ? request.getName() : this.name;
+        this.price = request.getPrice() != null ? request.getPrice() : this.price;
+        this.description = request.getDescription() != null ? request.getDescription() : this.description;
+        this.quantity = request.getQuantity() != null ? request.getQuantity() : this.quantity;
     }
 
     public void softDelete() {this.isDeleted = true;}
