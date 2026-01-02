@@ -57,10 +57,8 @@ public class ReviewService {
      */
     @Transactional(readOnly = true)
     public ReviewReadResponse readReview(Long reviewId) {
-
-        // 리뷰 존재 여부 검증
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_REVIEW));
+        
+        Review review = getReview(reviewId);
 
         ReviewDto foundReview = ReviewDto.from(review);
 
@@ -72,20 +70,41 @@ public class ReviewService {
      */
     @Transactional
     public ReviewUpdateResponse updateReview(AuthUser authUser, Long reviewId, ReviewUpdateRequest request) {
-        
+
         // 본인이 작성한 리뷰인지 권한 검증
         if (!authUser.getUserId().equals(reviewId)) {
             throw new CustomException(ExceptionCode.NO_PERMISSION);
         }
 
-        // 리뷰 존재 여부 검증 및 수정할 리뷰 가져오기
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_REVIEW));
+        Review review = getReview(reviewId);
 
         review.update(request);
 
         ReviewDto updatedReview = ReviewDto.from(review);
 
         return ReviewUpdateResponse.from(updatedReview);
+    }
+
+    @Transactional
+    public void deleteReview(AuthUser authUser, Long reviewId) {
+
+        // 본인이 작성한 리뷰인지 권한 검증
+        if (!authUser.getUserId().equals(reviewId)) {
+            throw new CustomException(ExceptionCode.NO_PERMISSION);
+        }
+
+        Review review = getReview(reviewId);
+
+        reviewRepository.delete(review);
+    }
+
+    /**
+     * 리뷰 존재 여부 검증 및 가져오기
+     */
+    private Review getReview(Long reviewId) {
+
+        // 리뷰 존재 여부 검증 및 수정할 리뷰 가져오기
+        return reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_REVIEW));
     }
 }

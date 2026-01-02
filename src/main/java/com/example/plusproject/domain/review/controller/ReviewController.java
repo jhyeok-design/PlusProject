@@ -59,4 +59,19 @@ public class ReviewController {
                 .status(HttpStatus.OK)
                 .body(CommonResponse.success("리뷰 수정 완료", reviewService.updateReview(authUser, reviewId, request)));
     }
+
+    /**
+     * 리뷰 삭제 API
+     */
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<CommonResponse<Void>> deleteReview(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long reviewId) {
+
+        reviewService.deleteReview(authUser, reviewId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.success("리뷰 삭제 완료", null));
+    }
 }
