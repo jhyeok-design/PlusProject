@@ -57,17 +57,17 @@ public class UserService {
         return UserUpdateResponse.from(user);
     }
 
-    @Transactional
-    public void deleteUser(AuthUser authUser) {
-
-        User user = userRepository.findById(authUser.getUserId())
-                .orElseThrow(()->new CustomException(NOT_FOUND_USER));
-        if (user.isDeleted()) {
-            throw new CustomException(USER_ALREADY_DELETED);
-        }
-
-        user.delete();
-
-        return new CommonResponse<>(true,"회원 탈퇴가 완료되었습니다", null);
-    }
+//    @Transactional
+//    public void deleteUser(AuthUser authUser) {
+//
+//        User user = userRepository.findById(authUser.getUserId())
+//                .orElseThrow(()->new CustomException(NOT_FOUND_USER));
+//        if (user.isDeleted()) {
+//            throw new CustomException(USER_ALREADY_DELETED);
+//        }
+//
+//        user.delete();
+//
+////        return new CommonResponse<>(true,"회원 탈퇴가 완료되었습니다", null);
+//    }
 }
