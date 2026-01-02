@@ -18,7 +18,9 @@ public class AuthController {
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
-
+    /**
+     * 회원가입
+     * */
     @PostMapping("/signup")
     public ResponseEntity<CommonResponse<AuthSignupResponse>> signUp(@RequestBody AuthSignupRequest authSignupRequest) {
         return ResponseEntity.ok(CommonResponse.success(
@@ -28,6 +30,9 @@ public class AuthController {
         );
     }
 
+    /**
+     * 로그인
+     * */
     @PostMapping("/login")
     public ResponseEntity<AuthLoginResponse> login(@RequestBody AuthLoginRequest authLoginRequest) {
         return ResponseEntity.ok(authService.login(authLoginRequest));

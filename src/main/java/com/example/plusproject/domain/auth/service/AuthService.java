@@ -27,12 +27,17 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    /**
+     * 회원가입
+     * */
     @Transactional
     public AuthSignupResponse signUp(AuthSignupRequest authSignupRequest) {
-        //email, phone 유니크인지 확인
+        //1. email, phone 유니크인지 확인
         boolean emailChk = userRepository.existsByEmail(authSignupRequest.getEmail());
+
         boolean phoneChk = userRepository.existsByPhone(authSignupRequest.getPhone());
 
+        //2. 이메일, 핸드폰 번호 중복시 예외처리
         if (emailChk) {
             throw new CustomException(ExceptionCode.USER_EMAIL_DUPLICATE);
         }
@@ -41,11 +46,10 @@ public class AuthService {
             throw new CustomException(ExceptionCode.USER_PHONE_DUPLICATE);
         }
 
-        //비밀번호 암호화
-        log.info("beforeEncode:{}", authSignupRequest.getPassword());
+        //3. 비밀번호 암호화
         String encodePassword = passwordEncoder.encode(authSignupRequest.getPassword());
-        log.info("encodePassword:{}",encodePassword);
-        //유저 엔티티에 새 유저 생성
+
+        //4. 유저 엔티티에 새 유저 생성
         User user = new User(
                 authSignupRequest.getName(),
                 authSignupRequest.getEmail(),
@@ -54,9 +58,12 @@ public class AuthService {
                 authSignupRequest.getPhone(),
                 authSignupRequest.getAddress()
         );
+
         try {
+            //5. 유저 레포지토리 save
             userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
+            //DB 유니크 예외처리
             if (e.getMessage().contains("uk_users_email")) {
                 throw new CustomException(ExceptionCode.USER_EMAIL_DUPLICATE);
             }
@@ -66,28 +73,34 @@ public class AuthService {
             throw e;
         }
 
-        //리턴
+        //6. DTO 리턴
         return AuthSignupResponse.from(user);
     }
 
+    /**
+     * 로그인
+     * */
     @Transactional
     public AuthLoginResponse login(AuthLoginRequest authLoginRequest) {
-        //이메일 검증
+
+        //1. 이메일 검증
         User user = userRepository.findByEmail(authLoginRequest.getEmail())
                 .orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND_EMAIL));
-        //isDeleted 체크
+
+        //2. isDeleted 체크
         if (user.isDeleted()) {
             throw new CustomException(ExceptionCode.USER_ALREADY_DELETED);
         }
 
-        //비밀번호 검증
+        //3. 비밀번호 검증
         if (!passwordEncoder.matches(authLoginRequest.getPassword(),user.getPassword())) {
             throw new CustomException(ExceptionCode.PASSWORD_NOT_MATCH);
         }
 
-        //토큰 발급
+        //4. 토큰 발급
         String token = jwtUtil.generateToken(user.getId(), user.getRole());
-        //리턴
+
+        //5. DTO 토큰 리턴
         return new AuthLoginResponse("Bearer "+token);
     }
 }

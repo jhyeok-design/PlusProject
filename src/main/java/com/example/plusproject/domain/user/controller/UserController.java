@@ -18,6 +18,9 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * 유저 마이페이지 조회
+     * */
     @GetMapping
     public ResponseEntity<CommonResponse<UserReadResponse>> readUser(@AuthenticationPrincipal AuthUser authUser) {
 
@@ -28,7 +31,10 @@ public class UserController {
         );
     }
 
-    @PutMapping
+    /**
+     * 유저 정보 수정
+     * */
+    @PatchMapping
     public ResponseEntity<CommonResponse<UserUpdateResponse>> updateUser(@AuthenticationPrincipal AuthUser authUser,
                                                                          @RequestBody UserUpdateRequest userUpdateRequest) {
 
@@ -39,9 +45,14 @@ public class UserController {
         );
     }
 
+    /**
+     * 유저 정보 삭제
+     * */
     @DeleteMapping("/me")
     public ResponseEntity<CommonResponse<?>> deleteUser(@AuthenticationPrincipal AuthUser authUser) {
+
         userService.deleteUser(authUser);
+
         return ResponseEntity.ok(CommonResponse.success(
                 "회원 탈퇴가 완료되었습니다",
                 null
