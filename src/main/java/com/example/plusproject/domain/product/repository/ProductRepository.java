@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findByName(@NotBlank(message = "상품명을 입력해주세요") String productName);
+
+    boolean existsByName(String name);
 }
