@@ -82,6 +82,27 @@ public class User extends BaseEntity {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public User(
+            String name,
+            String email,
+            String password,
+            String nickname,
+            String phone,
+            String address,
+            UserRole userRole
+    ) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.phone = phone;
+        this.address = address;
+        this.isDeleted = false;
+        this.role = userRole;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
     public void update(UserUpdateRequest request) {
         this.password = request.getPassword() != null ? request.getPassword() : this.password;
         this.name = request.getName() != null ? request.getName() : this.name;

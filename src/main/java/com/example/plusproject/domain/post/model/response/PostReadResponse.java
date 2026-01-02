@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @RequiredArgsConstructor
-public class PostCreateResponse {
+public class PostReadResponse {
     private final Long id;
     private final Long userId;
     private final String title;
@@ -16,8 +16,8 @@ public class PostCreateResponse {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public static PostCreateResponse from(PostDto dto) {
-        return new PostCreateResponse(
+    public static PostReadResponse from(PostDto dto) {
+        return new PostReadResponse(
                 dto.getId(),
                 dto.getUserId(),
                 dto.getTitle(),
