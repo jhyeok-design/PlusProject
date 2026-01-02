@@ -41,7 +41,7 @@ public class UserController {
 
     @DeleteMapping("/me")
     public ResponseEntity<CommonResponse<?>> deleteUser(@AuthenticationPrincipal AuthUser authUser) {
-
+        userService.deleteUser(authUser);
         return ResponseEntity.ok(CommonResponse.success(
                 "회원 탈퇴가 완료되었습니다",
                 null
