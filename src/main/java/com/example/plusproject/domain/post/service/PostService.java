@@ -9,7 +9,7 @@ import com.example.plusproject.domain.post.model.PostDto;
 import com.example.plusproject.domain.post.model.request.PostCreateRequest;
 import com.example.plusproject.domain.post.model.request.PostUpdateRequest;
 import com.example.plusproject.domain.post.model.response.PostCreateResponse;
-import com.example.plusproject.domain.post.model.response.PostGetResponse;
+import com.example.plusproject.domain.post.model.response.PostReadResponse;
 import com.example.plusproject.domain.post.model.response.PostUpdateResponse;
 import com.example.plusproject.domain.post.repository.PostRepository;
 import com.example.plusproject.domain.user.entity.User;
@@ -45,7 +45,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public PostGetResponse getPost(Long postId) {
+    public PostReadResponse getPost(Long postId) {
 
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_POST)
@@ -53,16 +53,16 @@ public class PostService {
 
         PostDto dto = PostDto.from(post);
 
-        return PostGetResponse.from(dto);
+        return PostReadResponse.from(dto);
 
     }
 
     @Transactional(readOnly = true)
-    public Page<PostGetResponse> getPostList(Pageable pageable) {
+    public Page<PostReadResponse> getPostList(Pageable pageable) {
 
         Page<PostDto> page = postRepository.findPostList(pageable);
 
-        return page.map(PostGetResponse::from);
+        return page.map(PostReadResponse::from);
     }
 
     @Transactional

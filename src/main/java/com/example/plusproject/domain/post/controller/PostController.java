@@ -6,7 +6,7 @@ import com.example.plusproject.common.model.CommonResponse;
 import com.example.plusproject.domain.post.model.request.PostCreateRequest;
 import com.example.plusproject.domain.post.model.request.PostUpdateRequest;
 import com.example.plusproject.domain.post.model.response.PostCreateResponse;
-import com.example.plusproject.domain.post.model.response.PostGetResponse;
+import com.example.plusproject.domain.post.model.response.PostReadResponse;
 import com.example.plusproject.domain.post.model.response.PostUpdateResponse;
 import com.example.plusproject.domain.post.service.PostService;
 import jakarta.validation.Valid;
@@ -40,9 +40,9 @@ public class PostController {
      * 게시글 단건 조회
      * */
     @GetMapping("/{postId}")
-    public ResponseEntity<CommonResponse<PostGetResponse>> getPost(@PathVariable Long postId) {
+    public ResponseEntity<CommonResponse<PostReadResponse>> getPost(@PathVariable Long postId) {
 
-        PostGetResponse result = postService.getPost(postId);
+        PostReadResponse result = postService.getPost(postId);
 
         return ResponseEntity.ok(CommonResponse.success("게시글 단건 조회 완료", result));
     }
@@ -51,9 +51,9 @@ public class PostController {
      * 게시글 다건 조회
      * */
     @GetMapping
-    public ResponseEntity<CommonResponse<Page<PostGetResponse>>> getPostList(Pageable pageable) {
+    public ResponseEntity<CommonResponse<Page<PostReadResponse>>> getPostList(Pageable pageable) {
 
-        Page<PostGetResponse> result = postService.getPostList(pageable);
+        Page<PostReadResponse> result = postService.getPostList(pageable);
 
         return ResponseEntity.ok(CommonResponse.success("게시글 전체 조회 완료", result));
     }
