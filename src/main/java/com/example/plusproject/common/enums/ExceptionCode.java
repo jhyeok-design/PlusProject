@@ -8,6 +8,7 @@ public enum ExceptionCode {
 
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     NOT_FOUND_POST(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."),
+    NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
     // 유저 회원가입시 email, phone 중복
     USER_EMAIL_DUPLICATE(HttpStatus.CONFLICT, "이미 사용중인 이메일 입니다."),
     USER_PHONE_DUPLICATE(HttpStatus.CONFLICT, "이미 사용중인 핸드폰 번호 입니다."),
@@ -32,9 +33,8 @@ public enum ExceptionCode {
     EXISTS_PRODUCT_NAME(HttpStatus.CONFLICT, "이미 사용중인 상품명 입니다."),
     OUT_OF_STOCK(HttpStatus.CONFLICT, "상품 재고가 부족합니다."),
 
-    NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다.");
-
-//    NO_PERMISSION(HttpStatus.FORBIDDEN, "권한이 없습니다.");
+    NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다.")
+    ;
 
     private final HttpStatus status;
     private final String message;

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @RequiredArgsConstructor
-public class CommentCreateResponse {
+public class CommentReadResponse {
     private final Long id;
     private final Long userId;
     private final Long postId;
@@ -16,8 +16,8 @@ public class CommentCreateResponse {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public static CommentCreateResponse from(CommentDto dto) {
-        return new CommentCreateResponse(
+    public static CommentReadResponse from(CommentDto dto) {
+        return new CommentReadResponse(
                 dto.getId(),
                 dto.getUserId(),
                 dto.getPostId(),
