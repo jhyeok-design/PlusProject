@@ -78,6 +78,10 @@ public class ProductService {
                 .toList();
     }
 
+    /**
+     * 상품 수정
+     * - ADMIN 권한을 가진 사용자만 상품을 수정.
+     */
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public ProductUpdateResponse updateProduct(@Valid ProductUpdateRequest request, Long productId) {
@@ -87,5 +91,22 @@ public class ProductService {
 
         product.update(request);
 
+        ProductUpdateResponse response = ProductUpdateResponse.from(ProductDto.from(product));
+
+        return response;
+    }
+
+    /**
+     * 상품 삭제
+     * - ADMIN 권한을 가진 사용자만 상품을 삭제.
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public void deleteProduct(Long productId) {
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT));
+
+        product.softDelete();
     }
 }

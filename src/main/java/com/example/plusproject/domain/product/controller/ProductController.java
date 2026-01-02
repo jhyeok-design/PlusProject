@@ -55,12 +55,26 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success("상품 전체 조회 성공", response));
     }
 
+    /**
+     * 상품 수정
+     */
     @PatchMapping("/{productId}")
     public ResponseEntity<CommonResponse<ProductUpdateResponse>> updateProduct(@Valid @RequestBody ProductUpdateRequest request, @PathVariable Long productId) {
 
         ProductUpdateResponse response = productService.updateProduct(request, productId);
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success("상품 수정 성공", response));
+    }
+
+    /**
+     * 상품 삭제
+     */
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<CommonResponse<Void>> deleteProduct(@PathVariable Long productId) {
+
+        productService.deleteProduct(productId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(CommonResponse.success("상품 삭제 성공", null));
     }
 
 }
