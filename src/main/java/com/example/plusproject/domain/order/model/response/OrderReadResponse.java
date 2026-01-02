@@ -1,6 +1,8 @@
 package com.example.plusproject.domain.order.model.response;
 
 import com.example.plusproject.domain.order.model.OrderDto;
+import com.example.plusproject.domain.user.entity.User;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -8,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @RequiredArgsConstructor
-public class OrderCreateResponse {
+public class OrderReadResponse {
 
     private final Long id;
     private final Long userId;
@@ -17,8 +19,8 @@ public class OrderCreateResponse {
     private final Long totalPrice;
     private final LocalDateTime createdAt;
 
-    public static OrderCreateResponse from(OrderDto orderDto) {
-        return new OrderCreateResponse(
+    public static OrderReadResponse from(OrderDto orderDto) {
+        return new OrderReadResponse(
                 orderDto.getId(),
                 orderDto.getUser().getId(),
                 orderDto.getProductName(),
@@ -27,5 +29,4 @@ public class OrderCreateResponse {
                 orderDto.getCreatedAt()
         );
     }
-
 }
