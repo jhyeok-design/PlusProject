@@ -21,9 +21,10 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<CommonResponse<AuthSignupResponse>> signUp(@RequestBody AuthSignupRequest authSignupRequest) {
-        return ResponseEntity.ok(new CommonResponse<>(true,
+        return ResponseEntity.ok(CommonResponse.success(
                 "회원가입이 완료되었습니다.",
-                authService.signUp(authSignupRequest))
+                authService.signUp(authSignupRequest)
+                )
         );
     }
 
