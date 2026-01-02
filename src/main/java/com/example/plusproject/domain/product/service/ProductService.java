@@ -47,7 +47,6 @@ public class ProductService {
 
     }
 
-
     /**
      * 상품 단건 조회
      * - 사용자 모두 조회 가능
@@ -56,6 +55,21 @@ public class ProductService {
     public ProductReadResponse readProduct(Long productId) {
 
         Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT));
+
+        ProductReadResponse response = ProductReadResponse.from(ProductDto.from(product));
+
+        return response;
+    }
+
+    /**
+     * 상품명 단건 조회 v2
+     * - 사용자 모두 조회 가능
+     */
+    @Transactional(readOnly = true)
+    public ProductReadResponse readProductByName(String name) {
+
+        Product product = productRepository.findByNameContaining(name)
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT));
 
         ProductReadResponse response = ProductReadResponse.from(ProductDto.from(product));

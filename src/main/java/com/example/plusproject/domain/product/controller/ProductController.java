@@ -45,6 +45,17 @@ public class ProductController {
     }
 
     /**
+     * 상품명 단건 조회 v2
+     */
+    @GetMapping("/name")
+    public ResponseEntity<CommonResponse<ProductReadResponse>> readProductByName(@RequestParam("name") String name) {
+
+        ProductReadResponse response = productService.readProductByName(name);
+
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success("상품명 단건 조회 성공", response));
+    }
+
+    /**
      * 상품 전체 조회
      */
     @GetMapping
