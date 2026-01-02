@@ -18,4 +18,16 @@ public class CommonResponse<T> {
         this.data = data;
         this.timestamp = LocalDateTime.now();
     }
+
+    public static <T> CommonResponse<T> success(T data) {
+        return new CommonResponse<>(true, null, data);
+    }
+
+    public static <T> CommonResponse<T> success(String message, T data) {
+        return new CommonResponse<>(true, message, data);
+    }
+
+    public static <T> CommonResponse<T> fail(String message) {
+        return new CommonResponse<>(false, message, null);
+    }
 }
