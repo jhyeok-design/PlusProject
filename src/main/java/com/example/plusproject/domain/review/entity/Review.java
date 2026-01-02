@@ -2,6 +2,7 @@ package com.example.plusproject.domain.review.entity;
 
 import com.example.plusproject.common.entity.BaseEntity;
 import com.example.plusproject.domain.product.entity.Product;
+import com.example.plusproject.domain.review.model.request.ReviewUpdateRequest;
 import com.example.plusproject.domain.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -39,5 +40,10 @@ public class Review extends BaseEntity {
         this.product = product;
         this.content = content;
         this.score = score;
+    }
+
+    public void update(ReviewUpdateRequest request) {
+        this.content = (!request.getContent().isBlank()) ? request.getContent() : this.content;
+        this.score = (request.getScore() != null) ? request.getScore() : this.score;
     }
 }
