@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductCreateRequest {
+public class ProductUpdateRequest {
 
-    @NotBlank(message = "상품명은 필수입니다.")
+    @NotBlank
     private String name;
     @NotNull
     private Long price;
@@ -19,5 +19,4 @@ public class ProductCreateRequest {
     private String description;
     @NotNull
     private Long quantity;
-
 }

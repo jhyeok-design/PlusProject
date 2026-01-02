@@ -5,14 +5,18 @@ import com.example.plusproject.common.exception.CustomException;
 import com.example.plusproject.domain.product.entity.Product;
 import com.example.plusproject.domain.product.model.ProductDto;
 import com.example.plusproject.domain.product.model.request.ProductCreateRequest;
+import com.example.plusproject.domain.product.model.request.ProductUpdateRequest;
 import com.example.plusproject.domain.product.model.response.ProductCreateResponse;
 import com.example.plusproject.domain.product.model.response.ProductReadResponse;
+import com.example.plusproject.domain.product.model.response.ProductUpdateResponse;
 import com.example.plusproject.domain.product.repository.ProductRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +50,7 @@ public class ProductService {
 
     /**
      * 상품 단건 조회
-     * - 사용자/비로그인 모두 조회 가능
+     * - 사용자 모두 조회 가능
      */
     @Transactional(readOnly = true)
     public ProductReadResponse readProduct(Long productId) {
@@ -57,5 +61,31 @@ public class ProductService {
         ProductReadResponse response = ProductReadResponse.from(ProductDto.from(product));
 
         return response;
+    }
+
+    /**
+     * 상품 전체 조회
+     * - 사용자 모두 조회 가능
+     */
+    @Transactional(readOnly = true)
+    public List<ProductReadResponse> readAllProduct() {
+
+        List<Product> products = productRepository.findAll();
+
+        return products.stream()
+                .map(ProductDto::from)
+                .map(ProductReadResponse::from)
+                .toList();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public ProductUpdateResponse updateProduct(@Valid ProductUpdateRequest request, Long productId) {
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT));
+
+        product.update(request);
+
     }
 }
