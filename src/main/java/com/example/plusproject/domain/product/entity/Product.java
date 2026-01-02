@@ -33,6 +33,13 @@ public class Product extends BaseEntity {
     @Column(nullable = false, name = "is_deleted")
     private boolean isDeleted = false;
 
+    public Product(String name, Long price, String description, Long quantity){
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.quantity = quantity;
+    }
+
     public void softDelete() {this.isDeleted = true;}
 
     // 임시

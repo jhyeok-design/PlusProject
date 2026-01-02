@@ -18,10 +18,15 @@ public enum ExceptionCode {
     INVALID_TOKEN(HttpStatus.NOT_FOUND,"토큰이 없습니다"),
     MATCHES_PASSWORD(HttpStatus.BAD_REQUEST, "동일한 비밀번호로는 변경할 수 없습니다"),
 
+    // 상품 조회
     NOT_FOUND_PRODUCT(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
+    // 상품 존재 여부
+    EXISTS_PRODUCT_NAME(HttpStatus.CONFLICT, "이미 사용중인 상품명 입니다."),
 
     NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
     ;
+
+
 
     private final HttpStatus status;
     private final String message;
