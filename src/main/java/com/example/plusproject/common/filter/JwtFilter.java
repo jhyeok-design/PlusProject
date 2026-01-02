@@ -71,7 +71,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        log.debug("[JWT FILTER] 인증성공 userId:{}, userRole:{}",userId,role);
+        log.info("[JWT FILTER] 인증성공 userId:{}, userRole:{}",userId, role);
 
         filterChain.doFilter(request, response);
     }

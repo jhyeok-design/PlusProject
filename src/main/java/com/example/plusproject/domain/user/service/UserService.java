@@ -4,9 +4,10 @@ import com.example.plusproject.common.exception.CustomException;
 import com.example.plusproject.common.model.AuthUser;
 import com.example.plusproject.common.model.CommonResponse;
 import com.example.plusproject.common.util.PasswordEncoder;
-import com.example.plusproject.domain.auth.model.response.AuthSignupResponse;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.model.request.UserUpdateRequest;
+import com.example.plusproject.domain.user.model.response.UserReadResponse;
+import com.example.plusproject.domain.user.model.response.UserUpdateResponse;
 import com.example.plusproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,16 +23,16 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public CommonResponse<AuthSignupResponse> myPage(AuthUser authUser) {
+    public CommonResponse<UserReadResponse> myPage(AuthUser authUser) {
 
         User user = userRepository.findById(authUser.getUserId())
                 .orElseThrow(()->new CustomException(NOT_FOUND_USER));
 
-        return new CommonResponse<>(true,"마이페이지 조회 성공", AuthSignupResponse.from(user));
+        return new CommonResponse<>(true,"마이페이지 조회 성공", UserReadResponse.from(user));
     }
 
     @Transactional
-    public CommonResponse<AuthSignupResponse> infoUpdate(AuthUser authUser, UserUpdateRequest userUpdateRequest) {
+    public CommonResponse<UserUpdateResponse> infoUpdate(AuthUser authUser, UserUpdateRequest userUpdateRequest) {
         // 유저 확인
         User user = userRepository.findById(authUser.getUserId())
                 .orElseThrow(()->new CustomException(NOT_FOUND_USER));
@@ -53,7 +54,7 @@ public class UserService {
 
         user.update(userUpdateRequest);
 
-        return new CommonResponse<>(true, "회원 정보 수정이 완료되었습니다", AuthSignupResponse.from(user));
+        return new CommonResponse<>(true, "회원 정보 수정이 완료되었습니다", UserUpdateResponse.from(user));
     }
 
     @Transactional
