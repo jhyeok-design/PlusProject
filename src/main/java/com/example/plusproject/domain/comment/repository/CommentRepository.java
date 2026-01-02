@@ -1,7 +1,13 @@
 package com.example.plusproject.domain.comment.repository;
 
 import com.example.plusproject.domain.comment.entity.Comment;
+import com.example.plusproject.domain.comment.model.CommentDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+import java.util.List;
+
+public interface CommentRepository extends JpaRepository<Comment, Long>, CommentCustomRepository {
+    void deleteByPostId(Long postId);
+
+    List<CommentDto> findAllByPostIdOrderByCreatedAtDesc(Long postId);
 }
