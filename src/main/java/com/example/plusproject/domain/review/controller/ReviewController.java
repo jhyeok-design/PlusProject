@@ -3,8 +3,10 @@ package com.example.plusproject.domain.review.controller;
 import com.example.plusproject.common.model.AuthUser;
 import com.example.plusproject.common.model.CommonResponse;
 import com.example.plusproject.domain.review.model.request.ReviewCreateRequest;
+import com.example.plusproject.domain.review.model.request.ReviewUpdateRequest;
 import com.example.plusproject.domain.review.model.response.ReviewCreateResponse;
 import com.example.plusproject.domain.review.model.response.ReviewReadResponse;
+import com.example.plusproject.domain.review.model.response.ReviewUpdateResponse;
 import com.example.plusproject.domain.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,5 +44,19 @@ public class ReviewController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(CommonResponse.success("리뷰 단 건 조회 완료", reviewService.readReview(reviewId)));
+    }
+
+    /**
+     * 리뷰 수정 API
+     */
+    @PatchMapping("/{reviewId}")
+    public ResponseEntity<CommonResponse<ReviewUpdateResponse>> updateReview(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long reviewId,
+            @Valid @RequestBody ReviewUpdateRequest request) {
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.success("리뷰 수정 완료", reviewService.updateReview(authUser, reviewId, request)));
     }
 }

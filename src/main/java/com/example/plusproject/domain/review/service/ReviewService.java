@@ -8,8 +8,10 @@ import com.example.plusproject.domain.product.repository.ProductRepository;
 import com.example.plusproject.domain.review.entity.Review;
 import com.example.plusproject.domain.review.model.ReviewDto;
 import com.example.plusproject.domain.review.model.request.ReviewCreateRequest;
+import com.example.plusproject.domain.review.model.request.ReviewUpdateRequest;
 import com.example.plusproject.domain.review.model.response.ReviewCreateResponse;
 import com.example.plusproject.domain.review.model.response.ReviewReadResponse;
+import com.example.plusproject.domain.review.model.response.ReviewUpdateResponse;
 import com.example.plusproject.domain.review.repository.ReviewRepository;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.repository.UserRepository;
@@ -39,15 +41,15 @@ public class ReviewService {
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT));
 
-        Review savedReview = new Review(
+        Review review = new Review(
                 user,
                 product,
                 request.getContent(),
                 request.getScore());
 
-        ReviewDto savedReviewDto = ReviewDto.from(reviewRepository.save(savedReview));
+        ReviewDto savedReview = ReviewDto.from(reviewRepository.save(review));
 
-        return ReviewCreateResponse.from(savedReviewDto);
+        return ReviewCreateResponse.from(savedReview);
     }
 
     /**
@@ -57,11 +59,33 @@ public class ReviewService {
     public ReviewReadResponse readReview(Long reviewId) {
 
         // 리뷰 존재 여부 검증
-        Review foundReview = reviewRepository.findById(reviewId)
+        Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_REVIEW));
 
-        ReviewDto foundReviewDto = ReviewDto.from(foundReview);
+        ReviewDto foundReview = ReviewDto.from(review);
 
-        return ReviewReadResponse.from(foundReviewDto);
+        return ReviewReadResponse.from(foundReview);
+    }
+
+    /**
+     * 리뷰 수정 비즈니스 로직
+     */
+    @Transactional
+    public ReviewUpdateResponse updateReview(AuthUser authUser, Long reviewId, ReviewUpdateRequest request) {
+        
+        // 본인이 작성한 리뷰인지 권한 검증
+        if (!authUser.getUserId().equals(reviewId)) {
+            throw new CustomException(ExceptionCode.NO_PERMISSION);
+        }
+
+        // 리뷰 존재 여부 검증 및 수정할 리뷰 가져오기
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_REVIEW));
+
+        review.update(request);
+
+        ReviewDto updatedReview = ReviewDto.from(review);
+
+        return ReviewUpdateResponse.from(updatedReview);
     }
 }
