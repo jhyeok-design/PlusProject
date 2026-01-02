@@ -22,9 +22,15 @@ public enum ExceptionCode {
     NO_PERMISSION(HttpStatus.FORBIDDEN,"작성자만 수정 및 삭제 가능합니다."),
 
     // 상품 조회
-    NOT_FOUND_PRODUCT(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
+    NOT_FOUND_PRODUCT(HttpStatus.NOT_FOUND, "해당 상품을 찾을 수 없습니다."),
+
+    NOT_FOUND_ORDER(HttpStatus.NOT_FOUND, "해당 주문건을 찾을 수 없습니다."),
+    NOT_YOUR_ORDER(HttpStatus.FORBIDDEN, "본인의 주문이 아닙니다."),
+    ORDER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 주문은 본인의 주문이 아닙니다."),
+
     // 상품 존재 여부
     EXISTS_PRODUCT_NAME(HttpStatus.CONFLICT, "이미 사용중인 상품명 입니다."),
+    OUT_OF_STOCK(HttpStatus.CONFLICT, "상품 재고가 부족합니다."),
 
     NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
 

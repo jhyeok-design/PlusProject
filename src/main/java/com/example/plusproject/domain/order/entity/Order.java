@@ -41,4 +41,12 @@ public class Order extends BaseEntity {
     private Boolean isDeleted = false;
 
     public void softDelete() {this.isDeleted = true;}
+
+    public Order(String productName, User user, Product product) {
+        this.productName = productName;
+        this.productPrice = product.getPrice();
+        this.totalPrice = product.getPrice();
+        this.user = user;
+        this.product = product;
+    }
 }
