@@ -71,12 +71,12 @@ public class ReviewService {
     @Transactional
     public ReviewUpdateResponse updateReview(AuthUser authUser, Long reviewId, ReviewUpdateRequest request) {
 
+        Review review = getReview(reviewId);
+
         // 본인이 작성한 리뷰인지 권한 검증
-        if (!authUser.getUserId().equals(reviewId)) {
+        if (!authUser.getUserId().equals(review.getUser().getId())) {
             throw new CustomException(ExceptionCode.NO_PERMISSION);
         }
-
-        Review review = getReview(reviewId);
 
         review.update(request);
 
@@ -88,12 +88,12 @@ public class ReviewService {
     @Transactional
     public void deleteReview(AuthUser authUser, Long reviewId) {
 
+        Review review = getReview(reviewId);
+
         // 본인이 작성한 리뷰인지 권한 검증
-        if (!authUser.getUserId().equals(reviewId)) {
+        if (!authUser.getUserId().equals(review.getUser().getId())) {
             throw new CustomException(ExceptionCode.NO_PERMISSION);
         }
-
-        Review review = getReview(reviewId);
 
         reviewRepository.delete(review);
     }
