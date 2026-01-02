@@ -49,9 +49,11 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CommentReadResponse> readCommentList(Long postId, Pageable pageable) {
+    public Page<CommentReadResponse> readCommentList(Long postId, AuthUser authUser, Pageable pageable) {
 
-        Page<CommentDto> page = commentRepository.findCommentList(postId, pageable);
+        Long userId = authUser.getUserId();
+
+        Page<CommentDto> page = commentRepository.findCommentList(postId, userId, pageable);
         return page
                 .map(CommentReadResponse::from);
     }

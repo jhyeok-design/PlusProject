@@ -17,7 +17,7 @@ public class CommentRepositoryImpl implements CommentCustomRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<CommentDto> findCommentList(Long postId, Pageable pageable) {
+    public Page<CommentDto> findCommentList(Long postId, Long userId, Pageable pageable) {
 
         List<CommentDto> commentList = queryFactory
                 .select(Projections.constructor(
@@ -30,7 +30,8 @@ public class CommentRepositoryImpl implements CommentCustomRepository {
                         comment.updatedAt
                 ))
                 .from(comment)
-                .where(comment.post.id.eq(postId))
+                .where(comment.post.id.eq(postId),
+                        comment.user.id.eq(userId))
                 .orderBy(comment.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -39,7 +40,8 @@ public class CommentRepositoryImpl implements CommentCustomRepository {
         Long total = queryFactory
                 .select(comment.count())
                 .from(comment)
-                .where(comment.post.id.eq(postId))
+                .where(comment.post.id.eq(postId),
+                        comment.user.id.eq(userId))
                 .fetchOne();
 
         long safeTotal = total != null ? total : 0L;

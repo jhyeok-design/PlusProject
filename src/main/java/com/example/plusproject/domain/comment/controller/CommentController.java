@@ -30,8 +30,8 @@ public class CommentController {
     }
 
     @GetMapping("/posts/{postId}/comments")
-    public ResponseEntity<CommonResponse<Page<CommentReadResponse>>> readCommentList(@PathVariable Long postId, Pageable pageable) {
-        Page<CommentReadResponse> result = commentService.readCommentList(postId, pageable);
+    public ResponseEntity<CommonResponse<Page<CommentReadResponse>>> readCommentList(@PathVariable Long postId, @AuthenticationPrincipal AuthUser authUser,Pageable pageable) {
+        Page<CommentReadResponse> result = commentService.readCommentList(postId, authUser,pageable);
 
         return ResponseEntity.ok(CommonResponse.success("댓글 전체 조회", result));
     }
