@@ -16,7 +16,7 @@ class ProductBatchRepositoryTest {
     private ProductBatchRepository productBatchRepository;
 
     private static final int TOTAL_PRODUCTS = 5_000_000;
-    private static final int BATCH_SIZE = 1_000;
+    private static final int BATCH_SIZE = 5_000;
 
     private static final String[] PREFIXES = {
             "작은", "거대한", "신비한", "고대의", "전설의",
