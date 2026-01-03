@@ -16,6 +16,7 @@ import java.util.List;
 
 import static com.example.plusproject.domain.product.entity.QProduct.product;
 import static com.example.plusproject.domain.review.entity.QReview.review;
+import static com.example.plusproject.domain.user.entity.QUser.user;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,12 +27,13 @@ public class ReviewQueryRepository {
     /**
      * 해당 상품 id에 따른 리뷰들을 조회 (최신순, 오래된순)
      */
-    public Page<ReviewReadResponse> readReviewAllSortBy(Long productId, Pageable pageable, String sort) {
+    public Page<ReviewReadResponse> readReviewWithProductSortBy(Long productId, Pageable pageable, String sort) {
 
         Long total = queryFactory
                 .select(review.countDistinct())
                 .from(review)
                 .join(review.product, product)
+                .join(review.user, user)
                 .where(review.product.id.eq(productId))
                 .fetchOne();
 
@@ -42,13 +44,16 @@ public class ReviewQueryRepository {
                         .select(Projections.constructor(ReviewReadResponse.class,
                                 review.id,
                                 review.user.id,
+                                review.user.nickname,
                                 review.product.id,
+                                review.product.name,
                                 review.content,
                                 review.score,
                                 review.createdAt,
                                 review.updatedAt))
                         .from(review)
                         .join(review.product, product)
+                        .join(review.user, user)
                         .where(review.product.id.eq(productId))
                         .orderBy(createdOrderSpecifier(sort))
                         .offset(pageable.getOffset())
@@ -56,9 +61,48 @@ public class ReviewQueryRepository {
                         .fetch(),
                 pageable,
                 totalCount);
-
     }
 
+    /**
+     * 로그인 한 본인의 리뷰 전체 조회 (최신순, 오래된순)
+     */
+    public Page<ReviewReadResponse> readReviewWithMeSortBy(Long userId, Pageable pageable, String sort) {
+
+        Long total = queryFactory
+                .select(review.countDistinct())
+                .from(review)
+                .join(review.product, product)
+                .join(review.user, user)
+                .where(review.user.id.eq(userId))
+                .fetchOne();
+
+        long totalCount = (total != null) ? total : 0L;
+
+        return new PageImpl<>(
+                queryFactory
+                        .select(Projections.constructor(ReviewReadResponse.class,
+                                review.id,
+                                review.user.id,
+                                review.user.nickname,
+                                review.product.id,
+                                review.product.name,
+                                review.content,
+                                review.score,
+                                review.createdAt,
+                                review.updatedAt))
+                        .from(review)
+                        .join(review.product, product)
+                        .join(review.user, user)
+                        .where(review.user.id.eq(userId))
+                        .orderBy(createdOrderSpecifier(sort))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch(),
+                pageable,
+                totalCount);
+    }
+
+    
     /**
      * 동적 정렬을 위한 OrderSpecifier를 얻는 메소드
      */

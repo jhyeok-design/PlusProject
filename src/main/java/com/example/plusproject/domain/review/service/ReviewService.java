@@ -71,14 +71,30 @@ public class ReviewService {
         return ReviewReadResponse.from(foundReview);
     }
 
-    @Transactional
-    public Page<ReviewReadResponse> readReviewAll(Long productId, Integer page, Integer size, String sort) {
+    /**
+     * 상품 별 리뷰 전체 조회 비즈니스 로직
+     */
+    @Transactional(readOnly = true)
+    public Page<ReviewReadResponse> readReviewWithProduct(Long productId, Integer page, Integer size, String sort) {
 
         Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
 
-        return reviewQueryRepository.readReviewAllSortBy(productId, pageable, sort);
+        return reviewQueryRepository.readReviewWithProductSortBy(productId, pageable, sort);
+    }
+
+    /**
+     * 유저 별 리뷰 전체 조회 비즈니스 로직 (내 리뷰 전체 조회)
+     */
+    @Transactional(readOnly = true)
+    public Page<ReviewReadResponse> readReviewWithMe(AuthUser authUser, Integer page, Integer size, String sort) {
+
+        Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
+
+        return reviewQueryRepository.readReviewWithMeSortBy(authUser.getUserId(), pageable, sort);
     }
 
     /**
@@ -101,6 +117,9 @@ public class ReviewService {
         return ReviewUpdateResponse.from(updatedReview);
     }
 
+    /**
+     * 리뷰 삭제 비즈니스 로직
+     */
     @Transactional
     public void deleteReview(AuthUser authUser, Long reviewId) {
 

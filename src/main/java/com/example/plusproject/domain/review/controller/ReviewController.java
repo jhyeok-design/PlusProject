@@ -51,7 +51,7 @@ public class ReviewController {
      * 상품 별 리뷰 전체 조회 API
      */
     @GetMapping
-    public ResponseEntity<CommonResponse<Page<ReviewReadResponse>>> readReviewAll(
+    public ResponseEntity<CommonResponse<Page<ReviewReadResponse>>> readReviewWithProduct(
             @RequestParam Long productId,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
@@ -59,7 +59,23 @@ public class ReviewController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(CommonResponse.success("상품 별 리뷰 전체 조회 완료", reviewService.readReviewAll(productId, page, size, sort)));
+                .body(CommonResponse.success("상품 별 리뷰 전체 조회 완료", reviewService.readReviewWithProduct(productId, page, size, sort)));
+    }
+
+    /**
+     * 유저 별 리뷰 전체 조회 API (내 리뷰 전체 조회)
+     * 시큐리티 설정할 것!!!!
+     */
+    @GetMapping("/my-review")
+    public ResponseEntity<CommonResponse<Page<ReviewReadResponse>>> readReviewWithMe(
+            @AuthenticationPrincipal AuthUser authUser,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "newest") String sort) {
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.success("내 리뷰 전체 조회 완료", reviewService.readReviewWithMe(authUser, page, size, sort)));
     }
 
     /**
