@@ -12,10 +12,15 @@ import com.example.plusproject.domain.review.model.request.ReviewUpdateRequest;
 import com.example.plusproject.domain.review.model.response.ReviewCreateResponse;
 import com.example.plusproject.domain.review.model.response.ReviewReadResponse;
 import com.example.plusproject.domain.review.model.response.ReviewUpdateResponse;
+import com.example.plusproject.domain.review.repository.ReviewQueryRepository;
 import com.example.plusproject.domain.review.repository.ReviewRepository;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +31,7 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
+    private final ReviewQueryRepository reviewQueryRepository;
 
     /**
      * 리뷰 생성 비즈니스 로직
@@ -63,6 +69,16 @@ public class ReviewService {
         ReviewDto foundReview = ReviewDto.from(review);
 
         return ReviewReadResponse.from(foundReview);
+    }
+
+    @Transactional
+    public Page<ReviewReadResponse> readReviewAll(Long productId, Integer page, Integer size, String sort) {
+
+        Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
+
+        return reviewQueryRepository.readReviewAllSortBy(productId, pageable, sort);
     }
 
     /**

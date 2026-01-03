@@ -10,6 +10,7 @@ import com.example.plusproject.domain.review.model.response.ReviewUpdateResponse
 import com.example.plusproject.domain.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -44,6 +45,21 @@ public class ReviewController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(CommonResponse.success("리뷰 단 건 조회 완료", reviewService.readReview(reviewId)));
+    }
+
+    /**
+     * 상품 별 리뷰 전체 조회 API
+     */
+    @GetMapping
+    public ResponseEntity<CommonResponse<Page<ReviewReadResponse>>> readReviewAll(
+            @RequestParam Long productId,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "newest") String sort) {
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.success("상품 별 리뷰 전체 조회 완료", reviewService.readReviewAll(productId, page, size, sort)));
     }
 
     /**
