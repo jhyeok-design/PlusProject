@@ -63,18 +63,17 @@ public class ProductService {
     }
 
     /**
-     * 상품명 단건 조회 v2
+     * 상품명 검색 v2
      * - 사용자 모두 조회 가능
      */
     @Transactional(readOnly = true)
-    public ProductReadResponse readProductByName(String name) {
+    public List<ProductReadResponse> readProductByName(String name) {
 
-        Product product = productRepository.findByNameContaining(name)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT));
+        List<Product> productsByName = productRepository.findAllByNameContaining(name);
 
-        ProductReadResponse response = ProductReadResponse.from(ProductDto.from(product));
-
-        return response;
+        return productsByName.stream()
+                .map(p -> ProductReadResponse.from(ProductDto.from(p)))
+                .toList();
     }
 
     /**
@@ -87,8 +86,7 @@ public class ProductService {
         List<Product> products = productRepository.findAll();
 
         return products.stream()
-                .map(ProductDto::from)
-                .map(ProductReadResponse::from)
+                .map(p -> ProductReadResponse.from(ProductDto.from(p)))
                 .toList();
     }
 
