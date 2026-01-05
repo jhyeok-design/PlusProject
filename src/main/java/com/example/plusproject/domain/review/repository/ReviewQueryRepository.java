@@ -4,6 +4,7 @@ import com.example.plusproject.domain.review.model.response.ReviewReadResponse;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -66,7 +67,7 @@ public class ReviewQueryRepository {
     /**
      * 로그인 한 본인의 리뷰 전체 조회 (최신순, 오래된순)
      */
-    public Page<ReviewReadResponse> readReviewWithMeSortBy(Long userId, Pageable pageable, String sort) {
+    public Page<ReviewReadResponse> readReviewWithMeSortBy(Long userId, String keyword, Pageable pageable, String sort) {
 
         Long total = queryFactory
                 .select(review.countDistinct())
@@ -93,7 +94,10 @@ public class ReviewQueryRepository {
                         .from(review)
                         .join(review.product, product)
                         .join(review.user, user)
-                        .where(review.user.id.eq(userId))
+                        .where(
+                                review.user.id.eq(userId),
+                                containsKeyword(keyword)
+                        )
                         .orderBy(createdOrderSpecifier(sort))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
@@ -117,5 +121,10 @@ public class ReviewQueryRepository {
         }
 
         return orderSpecifierList.toArray(new OrderSpecifier[0]);
+    }
+
+    private BooleanExpression containsKeyword(String keyword) {
+
+        return (keyword != null) ? review.content.contains(keyword) : null;
     }
 }

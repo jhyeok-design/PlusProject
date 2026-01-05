@@ -69,13 +69,14 @@ public class ReviewController {
     @GetMapping("/my-review")
     public ResponseEntity<CommonResponse<Page<ReviewReadResponse>>> readReviewWithMe(
             @AuthenticationPrincipal AuthUser authUser,
+            @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(defaultValue = "newest") String sort) {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(CommonResponse.success("내 리뷰 전체 조회 완료", reviewService.readReviewWithMe(authUser, page, size, sort)));
+                .body(CommonResponse.success("내 리뷰 전체 조회 완료", reviewService.readReviewWithMe(authUser, keyword, page, size, sort)));
     }
 
     /**

@@ -88,13 +88,13 @@ public class ReviewService {
      * 유저 별 리뷰 전체 조회 비즈니스 로직 (내 리뷰 전체 조회)
      */
     @Transactional(readOnly = true)
-    public Page<ReviewReadResponse> readReviewWithMe(AuthUser authUser, Integer page, Integer size, String sort) {
+    public Page<ReviewReadResponse> readReviewWithMe(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
 
         Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
 
-        return reviewQueryRepository.readReviewWithMeSortBy(authUser.getUserId(), pageable, sort);
+        return reviewQueryRepository.readReviewWithMeSortBy(authUser.getUserId(), keyword, pageable, sort);
     }
 
     /**

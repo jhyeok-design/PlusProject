@@ -41,7 +41,8 @@ public class SecurityConfig {
                 // 권한 설정
                 .authorizeHttpRequests(auth -> auth
                     //auth 단은 전부 통과
-                    .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/reviews/my-review").authenticated()
+                        .requestMatchers("/api/auth/**").permitAll()
                         //상품, 게시판, 댓글의 GET 요청들은 전부 통과
                         .requestMatchers(HttpMethod.GET,
                                 "/api/products/**",
