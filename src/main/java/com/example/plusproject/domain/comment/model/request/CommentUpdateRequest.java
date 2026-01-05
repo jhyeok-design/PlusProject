@@ -1,10 +1,8 @@
 package com.example.plusproject.domain.comment.model.request;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class CommentCreateRequest {
-    @NotBlank
+public class CommentUpdateRequest {
     private String content;
 }

@@ -47,7 +47,6 @@ public class ProductService {
 
     }
 
-
     /**
      * 상품 단건 조회
      * - 사용자 모두 조회 가능
@@ -64,6 +63,20 @@ public class ProductService {
     }
 
     /**
+     * 상품명 검색 v2
+     * - 사용자 모두 조회 가능
+     */
+    @Transactional(readOnly = true)
+    public List<ProductReadResponse> readProductByName(String name) {
+
+        List<Product> productsByName = productRepository.findAllByNameContaining(name);
+
+        return productsByName.stream()
+                .map(p -> ProductReadResponse.from(ProductDto.from(p)))
+                .toList();
+    }
+
+    /**
      * 상품 전체 조회
      * - 사용자 모두 조회 가능
      */
@@ -73,8 +86,7 @@ public class ProductService {
         List<Product> products = productRepository.findAll();
 
         return products.stream()
-                .map(ProductDto::from)
-                .map(ProductReadResponse::from)
+                .map(p -> ProductReadResponse.from(ProductDto.from(p)))
                 .toList();
     }
 

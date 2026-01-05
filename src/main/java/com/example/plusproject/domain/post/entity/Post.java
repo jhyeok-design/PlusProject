@@ -26,4 +26,15 @@ public class Post extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Post(String title, String content, User user) {
+        this.title = title;
+        this.content = content;
+        this.user = user;
+    }
+
+    public void update(String title, String content) {
+        if (title != null && !content.isBlank()) this.title = title;
+        if (content != null && !content.isBlank()) this.content = content;
+    }
 }
