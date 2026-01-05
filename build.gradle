@@ -26,11 +26,13 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-validation' // 유효성 검사 추가
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
-    implementation 'com.github.ben-manes.caffeine:caffeine'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc' // jdbc 추가
+    implementation 'org.springframework.boot:spring-boot-starter-cache' // cache 추가
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis' // Redis 추가
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310' // 파redis, LocalDate & LocalDateTime 파싱 대비
+    implementation 'com.github.ben-manes.caffeine:caffeine' // cache TTL 추가
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
