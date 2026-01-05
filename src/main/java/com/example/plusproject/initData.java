@@ -19,22 +19,22 @@ public class initData {
     private final PasswordEncoder passwordEncoder;
     private final PostRepository postRepository;
 
-    @PostConstruct
-    @Transactional
-    public void init(){
-        User admin = new User("관리자",
-                "admin@example.com",
-                passwordEncoder.encode("admin123"),
-                "admin",
-                "01012345678",
-                "서울특별시 중구",
-                UserRole.ADMIN);
-
-        userRepository.save(admin);
-
-
-        Post post1 =new Post("제목", "내용", admin);
-        postRepository.save(post1);
-
-    }
+//    @PostConstruct
+//    @Transactional
+//    public void init(){
+//        User admin = new User("관리자",
+//                "admin@example.com",
+//                passwordEncoder.encode("admin123"),
+//                "admin",
+//                "01012345678",
+//                "서울특별시 중구",
+//                UserRole.ADMIN);
+//
+//        userRepository.save(admin);
+//
+//
+//        Post post1 =new Post("제목", "내용", admin);
+//        postRepository.save(post1);
+//
+//    }
 }
