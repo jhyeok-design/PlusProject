@@ -54,8 +54,7 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductReadResponse readProduct(Long productId) {
 
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT));
+        Product product = readProductIdOrException(productId);
 
         ProductReadResponse response = ProductReadResponse.from(ProductDto.from(product));
 
@@ -98,8 +97,7 @@ public class ProductService {
     @Transactional
     public ProductUpdateResponse updateProduct(@Valid ProductUpdateRequest request, Long productId) {
 
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT));
+        Product product = readProductIdOrException(productId);
 
         product.update(request);
 
@@ -116,9 +114,15 @@ public class ProductService {
     @Transactional
     public void deleteProduct(Long productId) {
 
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT));
+        Product product = readProductIdOrException(productId);
 
         product.softDelete();
+    }
+
+
+    private Product readProductIdOrException(Long productId) {
+
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT));
     }
 }
