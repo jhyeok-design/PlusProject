@@ -1,20 +1,30 @@
 spring:
   application:
     name: PlusProject
+
   config:
     import: optional:file:.properties[.properties]
+
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=100, expireAfterWrite=60s
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: false
     show-sql: true
+
 jwt:
   secret:
     key: ${JWT_SECRET}
+
