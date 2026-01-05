@@ -64,7 +64,6 @@ public class ReviewController {
 
     /**
      * 유저 별 리뷰 전체 조회 API (내 리뷰 전체 조회)
-     * 시큐리티 설정할 것!!!!
      */
     @GetMapping("/my-review")
     public ResponseEntity<CommonResponse<Page<ReviewReadResponse>>> readReviewWithMe(
