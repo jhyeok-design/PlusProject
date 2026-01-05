@@ -7,9 +7,13 @@ import com.example.plusproject.domain.user.model.response.UserReadResponse;
 import com.example.plusproject.domain.user.model.response.UserUpdateResponse;
 import com.example.plusproject.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,5 +62,22 @@ public class UserController {
                 null
                 )
         );
+    }
+
+    /**
+     * 유저 검색
+     * */
+    @GetMapping("/search")
+    public ResponseEntity<CommonResponse<?>> readUserByQuery(@AuthenticationPrincipal AuthUser authUser,
+                                                             @PageableDefault(page = 0, size = 10) Pageable pageable,
+                                                             @RequestParam(required = false) String domain,
+                                                             @RequestParam(required = false) String name,
+                                                             @RequestParam(required = false)LocalDateTime createdAt
+                                                             ) {
+
+        return ResponseEntity.ok(CommonResponse.success(
+                "유저 목록 조회 성공",
+                userService.readUserByQuery(authUser, pageable, domain, name, createdAt)
+        ));
     }
 }

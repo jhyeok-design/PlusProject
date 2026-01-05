@@ -4,13 +4,19 @@ import com.example.plusproject.common.exception.CustomException;
 import com.example.plusproject.common.model.AuthUser;
 import com.example.plusproject.common.util.PasswordEncoder;
 import com.example.plusproject.domain.user.entity.User;
+import com.example.plusproject.domain.user.model.UserDto;
 import com.example.plusproject.domain.user.model.request.UserUpdateRequest;
 import com.example.plusproject.domain.user.model.response.UserReadResponse;
 import com.example.plusproject.domain.user.model.response.UserUpdateResponse;
 import com.example.plusproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+
+import java.time.LocalDateTime;
 
 import static com.example.plusproject.common.enums.ExceptionCode.*;
 
@@ -31,8 +37,11 @@ public class UserService {
         User user = userRepository.findById(authUser.getUserId())
                 .orElseThrow(()->new CustomException(NOT_FOUND_USER));
 
-        // 2. DTO 리턴
-        return UserReadResponse.from(user);
+        // 2. userDto 에 담음
+        UserDto response = UserDto.from(user);
+
+        // 3. DTO 리턴
+        return UserReadResponse.from(response);
     }
 
     /**
@@ -63,8 +72,11 @@ public class UserService {
         // 5. 수정 정보 업데이트
         user.update(userUpdateRequest);
 
+        // 6. userDto 담음
+        UserDto response = UserDto.from(user);
+
         // 6. DTO 리턴
-        return UserUpdateResponse.from(user);
+        return UserUpdateResponse.from(response);
     }
 
     /**
@@ -85,5 +97,24 @@ public class UserService {
 
         // 3. 유저 삭제
         user.delete();
+    }
+
+    /**
+     * 유저 검색
+     * */
+    @Transactional(readOnly = true)
+    public Page<UserReadResponse> readUserByQuery(AuthUser authUser,
+                                Pageable pageable,
+                                String domain,
+                                String name,
+                                LocalDateTime createdAt
+    ) {
+        // 1. 유저 id 조회 / 없으면 예외처리
+
+        User user = userRepository.findById(authUser.getUserId())
+                .orElseThrow(()->new CustomException(NOT_FOUND_USER));
+
+        // 2. 쿼리dsl 로 조회
+        return userRepository.readUserByQuery(pageable, domain, name, createdAt);
     }
 }
