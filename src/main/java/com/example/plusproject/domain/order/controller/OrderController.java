@@ -1,13 +1,22 @@
 package com.example.plusproject.domain.order.controller;
 
+import com.example.plusproject.common.enums.ExceptionCode;
+import com.example.plusproject.common.exception.CustomException;
 import com.example.plusproject.common.model.AuthUser;
 import com.example.plusproject.common.model.CommonResponse;
+import com.example.plusproject.domain.order.entity.Order;
 import com.example.plusproject.domain.order.model.request.OrderCreateRequest;
 import com.example.plusproject.domain.order.model.response.OrderCreateResponse;
+import com.example.plusproject.domain.order.model.response.OrderPageResponse;
 import com.example.plusproject.domain.order.model.response.OrderReadResponse;
 import com.example.plusproject.domain.order.service.OrderService;
+import com.example.plusproject.domain.search.service.SearchService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +30,7 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final SearchService searchService;
 
     /**
      * 주문 생성
@@ -75,6 +85,20 @@ public class OrderController {
         orderService.deleteOrder(authUser, orderId);
 
         return ResponseEntity.ok(CommonResponse.success("주문 삭제 성공", null));
+    }
+
+
+    /**
+     * 검색 - v1
+     */
+    @GetMapping("/v1/search")
+    public ResponseEntity<CommonResponse<Page<OrderPageResponse>>> searchV1(
+            @RequestParam String keyword,
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+
+        Page<OrderPageResponse> response = orderService.searchV1(keyword, pageable);
+
+        return ResponseEntity.ok(CommonResponse.success("주문 검색 조회 성공", response));
     }
 
 }
