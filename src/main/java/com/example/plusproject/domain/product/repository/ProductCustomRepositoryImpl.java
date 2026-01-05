@@ -31,7 +31,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         BooleanBuilder builder = new BooleanBuilder();
 
         // 2. 변수 null 검증 후 build
-        if (name != null) { //이름 포함하는 쿼리
+        if (name != null) {     //이름 포함하는 쿼리
             builder.and(product.name.contains(name));   //contain 많이 사용/ like 는 prefix, 접두사, 접미사
         }
         if (price != null) {    //조회한 가격보다 같거나 낮은 쿼리
@@ -61,7 +61,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
         List<ProductReadResponse> response = lists.stream().map(ProductReadResponse::from).toList();
         //page 로 리턴
-        return new PageImpl<>(response,pageable,count);
+        return new PageImpl<>(response, pageable, count);
     }
 
 }
