@@ -81,4 +81,15 @@ public class PostController {
         return ResponseEntity.ok(CommonResponse.success("게시글 삭제 완료", null));
     }
 
+    /*
+     * 게시글 검색 (제목 키워드 및 유저 닉네임 검색)
+     * */
+    @GetMapping("/search")
+    public ResponseEntity<CommonResponse<Page<PostReadResponse>>> searchPostList(@RequestParam(required = false) String keyword, @RequestParam(required = false) String nickname, Pageable pageable) {
+        Page<PostReadResponse> result = postService.searchPostList(keyword, nickname, pageable);
+
+        return ResponseEntity.ok(CommonResponse.success("게시글 검색 성공", result));
+    }
+
+
 }

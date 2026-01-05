@@ -6,4 +6,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface CustomPostRepository {
     Page<PostDto> findPostList(Pageable pageable);
+
+    Page<PostDto> searchByConditions(String keyword, String nickname, Pageable pageable);
 }
