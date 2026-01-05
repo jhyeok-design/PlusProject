@@ -7,6 +7,7 @@ import com.example.plusproject.domain.order.entity.Order;
 import com.example.plusproject.domain.order.model.OrderDto;
 import com.example.plusproject.domain.order.model.request.OrderCreateRequest;
 import com.example.plusproject.domain.order.model.response.OrderCreateResponse;
+import com.example.plusproject.domain.order.model.response.OrderPageResponse;
 import com.example.plusproject.domain.order.model.response.OrderReadResponse;
 import com.example.plusproject.domain.order.repository.OrderRepository;
 import com.example.plusproject.domain.product.entity.Product;
@@ -14,6 +15,9 @@ import com.example.plusproject.domain.product.repository.ProductRepository;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -129,5 +133,32 @@ public class OrderService {
 
         // 삭제
         order.softDelete();
+    }
+
+
+    /**
+     * 검색 - v1
+     */
+    @Transactional(readOnly = true)
+    public Page<OrderPageResponse> searchV1(String keyword, Pageable pageable) {
+
+        Page<Order> orderPage = orderRepository.findAllByProduct_NameContaining(keyword, pageable);
+
+//        for (Order order: orderPage) {
+//
+//            if (keyword.equals(order.getProductName())) {
+//
+//                Long userId = authUser.getUserId();
+//                User user = userRepository.findById(userId).orElseThrow(
+//                        () -> new CustomException(ExceptionCode.NOT_FOUND_USER)
+//                );
+//
+//                if (!user.getEmail().equals(order.getUser().getEmail())) {
+//                    throw new CustomException(ExceptionCode.ORDER_ACCESS_DENIED);
+//                }
+//            }
+//        }
+
+        return orderPage.map(OrderPageResponse::new);
     }
 }
