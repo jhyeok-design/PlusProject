@@ -15,7 +15,8 @@ import com.example.plusproject.domain.product.repository.ProductRepository;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -144,20 +146,21 @@ public class OrderService {
 
         Page<Order> orderPage = orderRepository.findAllByProduct_NameContaining(keyword, pageable);
 
-//        for (Order order: orderPage) {
-//
-//            if (keyword.equals(order.getProductName())) {
-//
-//                Long userId = authUser.getUserId();
-//                User user = userRepository.findById(userId).orElseThrow(
-//                        () -> new CustomException(ExceptionCode.NOT_FOUND_USER)
-//                );
-//
-//                if (!user.getEmail().equals(order.getUser().getEmail())) {
-//                    throw new CustomException(ExceptionCode.ORDER_ACCESS_DENIED);
-//                }
-//            }
-//        }
+        return orderPage.map(OrderPageResponse::new);
+    }
+
+
+    /**
+     * 검색 - v2
+     */
+    @Cacheable(value = "orderCache",
+            key = "'keyword: ' + #keyword + ':page:' + #pageable.pageNumber + ':size:' + #pageable.pageSize")
+    @Transactional(readOnly = true)
+    public Page<OrderPageResponse> searchV2(String keyword, Pageable pageable) {
+        
+        log.info("캐시에 없으니 DB에서 직접 조회!");
+        
+        Page<Order> orderPage = orderRepository.findAllByProduct_NameContaining(keyword, pageable);
 
         return orderPage.map(OrderPageResponse::new);
     }

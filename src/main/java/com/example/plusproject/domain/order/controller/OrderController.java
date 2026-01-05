@@ -13,7 +13,9 @@ import com.example.plusproject.domain.order.service.OrderService;
 import com.example.plusproject.domain.search.service.SearchService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Or;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -98,7 +100,21 @@ public class OrderController {
 
         Page<OrderPageResponse> response = orderService.searchV1(keyword, pageable);
 
-        return ResponseEntity.ok(CommonResponse.success("주문 검색 조회 성공", response));
+        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V1 조회 성공", response));
+    }
+
+
+    /**
+     * 검색 - v2
+     */
+    @GetMapping("/searchV2")
+    public ResponseEntity<CommonResponse<Page<OrderPageResponse>>> searchV2(
+            @RequestParam String keyword,
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+
+        Page<OrderPageResponse> response = orderService.searchV2(keyword, pageable);
+
+        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V2 조회 성공", response));
     }
 
 }
