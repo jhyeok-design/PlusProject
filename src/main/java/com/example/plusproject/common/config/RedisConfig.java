@@ -26,13 +26,7 @@ public class RedisConfig {
                 // Jackson이 LocalDate, LocalDateTime을 정상적으로 JSON 변환할 수 있도록 지원
                 .registerModule(new JavaTimeModule())
                 // "2025-01-01T10:30:00" 형태의 가독성 좋은 문자열로 저장하기 위함
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                // 다양한 DTO를 하나의 RedisTemplate으로 처리하기 위함
-                .activateDefaultTyping(
-                        LaissezFaireSubTypeValidator.instance,
-                        ObjectMapper.DefaultTyping.NON_FINAL,
-                        JsonTypeInfo.As.PROPERTY
-                );
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         GenericJackson2JsonRedisSerializer serializer =
                 new GenericJackson2JsonRedisSerializer(mapper);
