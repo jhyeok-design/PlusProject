@@ -48,11 +48,11 @@ public class ProductController {
      * 상품명 검색 v2
      */
     @GetMapping("/name")
-    public ResponseEntity<CommonResponse<List<ProductReadResponse>>> readProductByName(@RequestParam("name") String name) {
+    public ResponseEntity<CommonResponse<List<ProductReadResponse>>> readProductByName(@RequestParam("keyword") String name) {
 
         List<ProductReadResponse> response = productService.readProductByName(name);
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success("상품명 단건 조회 성공", response));
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success("상품명 조회 성공", response));
     }
 
     /**
