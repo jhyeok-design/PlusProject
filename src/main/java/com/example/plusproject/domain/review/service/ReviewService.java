@@ -17,10 +17,8 @@ import com.example.plusproject.domain.review.repository.ReviewRepository;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +59,7 @@ public class ReviewService {
     /**
      * 리뷰 단 건 조회 비즈니스 로직
      */
+//    @Cacheable(value = "reviewCache", key = "#reviewId")
     @Transactional(readOnly = true)
     public ReviewReadResponse readReview(Long reviewId) {
         
@@ -74,6 +73,7 @@ public class ReviewService {
     /**
      * 상품 별 리뷰 전체 조회 비즈니스 로직
      */
+//    @Cacheable(value = "productReviewCache", key = "#productId")
     @Transactional(readOnly = true)
     public Page<ReviewReadResponse> readReviewWithProduct(Long productId, Integer page, Integer size, String sort) {
 
@@ -87,8 +87,9 @@ public class ReviewService {
     /**
      * 유저 별 리뷰 전체 조회 비즈니스 로직 (내 리뷰 전체 조회)
      */
+//    @Cacheable(value = "myReviewCache", key = "#authUser.userId")
     @Transactional(readOnly = true)
-    public Page<ReviewReadResponse> readReviewWithMe(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
+    public Slice<ReviewReadResponse> readReviewWithMe(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
 
         Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
 

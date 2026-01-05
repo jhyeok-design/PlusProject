@@ -7,9 +7,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -67,46 +65,45 @@ public class ReviewQueryRepository {
     /**
      * 로그인 한 본인의 리뷰 전체 조회 (최신순, 오래된순)
      */
-    public Page<ReviewReadResponse> readReviewWithMeSortBy(Long userId, String keyword, Pageable pageable, String sort) {
+    public Slice<ReviewReadResponse> readReviewWithMeSortBy(Long userId, String keyword, Pageable pageable, String sort) {
 
-        Long total = queryFactory
-                .select(review.countDistinct())
+        List<ReviewReadResponse> result = queryFactory
+                .select(Projections.constructor(ReviewReadResponse.class,
+                        review.id,
+                        review.user.id,
+                        review.user.nickname,
+                        review.product.id,
+                        review.product.name,
+                        review.content,
+                        review.score,
+                        review.createdAt,
+                        review.updatedAt))
                 .from(review)
                 .join(review.product, product)
                 .join(review.user, user)
-                .where(review.user.id.eq(userId))
-                .fetchOne();
+                .where(
+                        review.user.id.eq(userId),
+                        containsKeyword(keyword)
+                )
+                .orderBy(createdOrderSpecifier(sort))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
 
-        long totalCount = (total != null) ? total : 0L;
-
-        return new PageImpl<>(
-                queryFactory
-                        .select(Projections.constructor(ReviewReadResponse.class,
-                                review.id,
-                                review.user.id,
-                                review.user.nickname,
-                                review.product.id,
-                                review.product.name,
-                                review.content,
-                                review.score,
-                                review.createdAt,
-                                review.updatedAt))
-                        .from(review)
-                        .join(review.product, product)
-                        .join(review.user, user)
-                        .where(
-                                review.user.id.eq(userId),
-                                containsKeyword(keyword)
-                        )
-                        .orderBy(createdOrderSpecifier(sort))
-                        .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize())
-                        .fetch(),
-                pageable,
-                totalCount);
+        return new SliceImpl<>(result, pageable, hasNext(result, pageable.getPageSize()));
     }
 
-    
+    private boolean hasNext(List<ReviewReadResponse> result, int pageSize) {
+
+        // 하나
+        if (result.size() > pageSize) {
+            result.remove(pageSize);
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * 동적 정렬을 위한 OrderSpecifier를 얻는 메소드
      */
