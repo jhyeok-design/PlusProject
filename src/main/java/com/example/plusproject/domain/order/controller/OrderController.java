@@ -91,7 +91,7 @@ public class OrderController {
     /**
      * 검색 - v1
      */
-    @GetMapping("/v1/search")
+    @GetMapping("/searchV1")
     public ResponseEntity<CommonResponse<Page<OrderPageResponse>>> searchV1(
             @RequestParam String keyword,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
