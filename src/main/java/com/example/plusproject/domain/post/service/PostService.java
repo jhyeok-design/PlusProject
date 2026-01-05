@@ -17,6 +17,7 @@ import com.example.plusproject.domain.post.repository.PostRepository;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -113,7 +114,20 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PostReadResponse> searchPostList(String keyword, String nickname, Pageable pageable) {
+    public Page<PostReadResponse> searchPostPage(String keyword, String nickname, Pageable pageable) {
+        Page<PostDto> page = postRepository.searchByConditions(keyword, nickname, pageable);
+
+        return page.map(PostReadResponse::from);
+    }
+
+    @Cacheable(value = "postCache", key = "'kw=' + (#keyword ?: 'ALL') + " +
+            "':nick=' + (#nickname ?: 'ALL') + " +
+            "':page=' + #pageable.pageNumber + " +
+            "':size=' + #pageable.pageSize + " +
+            "':sort=' + #pageable.sort")
+    @Transactional(readOnly = true)
+    public Page<PostReadResponse> searchPostPageV2(String keyword, String nickname, Pageable pageable) {
+
         Page<PostDto> page = postRepository.searchByConditions(keyword, nickname, pageable);
 
         return page.map(PostReadResponse::from);

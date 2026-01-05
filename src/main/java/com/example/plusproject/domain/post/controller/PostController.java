@@ -85,8 +85,18 @@ public class PostController {
      * 게시글 검색 (제목 키워드 및 유저 닉네임 검색)
      * */
     @GetMapping("/search")
-    public ResponseEntity<CommonResponse<Page<PostReadResponse>>> searchPostList(@RequestParam(required = false) String keyword, @RequestParam(required = false) String nickname, Pageable pageable) {
-        Page<PostReadResponse> result = postService.searchPostList(keyword, nickname, pageable);
+    public ResponseEntity<CommonResponse<Page<PostReadResponse>>> searchPostPage(@RequestParam(required = false) String keyword, @RequestParam(required = false) String nickname, Pageable pageable) {
+        Page<PostReadResponse> result = postService.searchPostPage(keyword, nickname, pageable);
+
+        return ResponseEntity.ok(CommonResponse.success("게시글 검색 성공", result));
+    }
+
+    /*
+     * 검색기능 v2 cache적용
+     * */
+    @GetMapping("/searchV2")
+    public ResponseEntity<CommonResponse<Page<PostReadResponse>>> searchPostPageV2(@RequestParam(required = false) String keyword, @RequestParam(required = false) String nickname, Pageable pageable) {
+        Page<PostReadResponse> result = postService.searchPostPageV2(keyword, nickname, pageable);
 
         return ResponseEntity.ok(CommonResponse.success("게시글 검색 성공", result));
     }
