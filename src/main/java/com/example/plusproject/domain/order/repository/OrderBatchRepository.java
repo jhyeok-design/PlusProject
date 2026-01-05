@@ -13,7 +13,6 @@ public class OrderBatchRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    @Transactional
     public void batchInsert(List<Object[]> batchArgs) {
 
         String sql = """

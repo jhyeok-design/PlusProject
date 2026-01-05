@@ -1,7 +1,6 @@
-package com.example.plusproject.domain.product.repository;
+package com.example.plusproject.domain.order.repository;
 
 import com.example.plusproject.common.util.PasswordEncoder;
-import com.example.plusproject.domain.order.repository.OrderBatchRepository;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Commit;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,8 @@ import java.util.Random;
 
 
 @SpringBootTest
+//@Disabled("대용량 주문 데이터 생성용 테스트")
+@Commit
 public class OrderBatchRepositoryTest {
 
     @Autowired
@@ -31,7 +34,7 @@ public class OrderBatchRepositoryTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private static final int TOTAL_ORDERS = 50_000;
+    private static final int TOTAL_ORDERS = 5_000_000;
     private static final int BATCH_SIZE = 1_000;
 
     @BeforeEach
@@ -54,7 +57,7 @@ public class OrderBatchRepositoryTest {
         }
     }
 
-
+    @Transactional
     @Test
     void bulkInsert_orders() {
 
@@ -68,9 +71,9 @@ public class OrderBatchRepositoryTest {
 
         Random random = new Random();
         List<Object[]> batch = new ArrayList<>(BATCH_SIZE);
-        int count = 0;
 
-        System.out.println("주문 생성 시작");
+        long start = System.currentTimeMillis();
+        int count = 0;
 
         for (int i = 0; i < TOTAL_ORDERS; i++) {
 
@@ -93,7 +96,10 @@ public class OrderBatchRepositoryTest {
                 orderBatchRepository.batchInsert(batch);
                 count += batch.size();
                 batch.clear();
-                System.out.println("Inserted orders: " + count);
+
+                if (count % 100_000 == 0) {
+                    System.out.println("Inserted orders: " + count);
+                }
             }
         }
 
@@ -101,7 +107,8 @@ public class OrderBatchRepositoryTest {
             orderBatchRepository.batchInsert(batch);
         }
 
-        System.out.println("주문 5만 건 생성 완료");
+        long end = System.currentTimeMillis();
+        System.out.println("총 소요 시간(ms): " + (end - start));
     }
 }
 
