@@ -111,4 +111,11 @@ public class PostService {
 
         return post;
     }
+
+    @Transactional(readOnly = true)
+    public Page<PostReadResponse> searchPostList(String keyword, String nickname, Pageable pageable) {
+        Page<PostDto> page = postRepository.searchByConditions(keyword, nickname, pageable);
+
+        return page.map(PostReadResponse::from);
+    }
 }
