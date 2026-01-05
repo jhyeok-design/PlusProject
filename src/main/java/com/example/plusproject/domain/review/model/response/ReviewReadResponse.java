@@ -12,7 +12,9 @@ public class ReviewReadResponse {
 
     private final Long id;
     private final Long userId;
+    private final String userNickname;
     private final Long productId;
+    private final String productName;
     private final String content;
     private final Integer score;
     private final LocalDateTime createdAt;
@@ -23,7 +25,9 @@ public class ReviewReadResponse {
         return new ReviewReadResponse(
                 reviewDto.getId(),
                 reviewDto.getUser().getId(),
+                reviewDto.getUser().getNickname(),
                 reviewDto.getProduct().getId(),
+                reviewDto.getProduct().getName(),
                 reviewDto.getContent(),
                 reviewDto.getScore(),
                 reviewDto.getCreatedAt(),

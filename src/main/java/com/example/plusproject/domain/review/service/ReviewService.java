@@ -12,10 +12,15 @@ import com.example.plusproject.domain.review.model.request.ReviewUpdateRequest;
 import com.example.plusproject.domain.review.model.response.ReviewCreateResponse;
 import com.example.plusproject.domain.review.model.response.ReviewReadResponse;
 import com.example.plusproject.domain.review.model.response.ReviewUpdateResponse;
+import com.example.plusproject.domain.review.repository.ReviewQueryRepository;
 import com.example.plusproject.domain.review.repository.ReviewRepository;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +31,7 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
+    private final ReviewQueryRepository reviewQueryRepository;
 
     /**
      * 리뷰 생성 비즈니스 로직
@@ -66,6 +72,32 @@ public class ReviewService {
     }
 
     /**
+     * 상품 별 리뷰 전체 조회 비즈니스 로직
+     */
+    @Transactional(readOnly = true)
+    public Page<ReviewReadResponse> readReviewWithProduct(Long productId, Integer page, Integer size, String sort) {
+
+        Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
+
+        return reviewQueryRepository.readReviewWithProductSortBy(productId, pageable, sort);
+    }
+
+    /**
+     * 유저 별 리뷰 전체 조회 비즈니스 로직 (내 리뷰 전체 조회)
+     */
+    @Transactional(readOnly = true)
+    public Page<ReviewReadResponse> readReviewWithMe(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
+
+        Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
+
+        return reviewQueryRepository.readReviewWithMeSortBy(authUser.getUserId(), keyword, pageable, sort);
+    }
+
+    /**
      * 리뷰 수정 비즈니스 로직
      */
     @Transactional
@@ -85,6 +117,9 @@ public class ReviewService {
         return ReviewUpdateResponse.from(updatedReview);
     }
 
+    /**
+     * 리뷰 삭제 비즈니스 로직
+     */
     @Transactional
     public void deleteReview(AuthUser authUser, Long reviewId) {
 
