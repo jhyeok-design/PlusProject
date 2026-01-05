@@ -7,6 +7,7 @@ import com.example.plusproject.domain.product.model.response.ProductCreateRespon
 import com.example.plusproject.domain.product.model.response.ProductReadResponse;
 import com.example.plusproject.domain.product.model.response.ProductUpdateResponse;
 import com.example.plusproject.domain.product.service.ProductService;
+import com.example.plusproject.domain.search.service.SearchService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final SearchService searchService;
 
     /**
      * 상품 생성
@@ -45,10 +47,13 @@ public class ProductController {
     }
 
     /**
-     * 상품명 검색 v2
+     * 상품명 검색 v2 + Page로 반환
      */
     @GetMapping("/name")
     public ResponseEntity<CommonResponse<List<ProductReadResponse>>> readProductByName(@RequestParam("keyword") String name) {
+
+        // 검색어 집계
+        searchService.recordSearch(name);
 
         List<ProductReadResponse> response = productService.readProductByName(name);
 
