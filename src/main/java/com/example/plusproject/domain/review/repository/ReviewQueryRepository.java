@@ -113,7 +113,7 @@ public class ReviewQueryRepository {
     private OrderSpecifier[] createdOrderSpecifier(String sort) {
         List<OrderSpecifier> orderSpecifierList = new ArrayList<>();
 
-        // sort가 null이면 NPE 발생하므로 리터럴을 앞에 두는 습관 들이기
+        // sort가 null이면 NPE 발생하므로 리터럴을 앞에 두도록 함
         if ("newest".equals(sort)) {
             orderSpecifierList.add(new OrderSpecifier(Order.DESC, review.createdAt));
         } else {

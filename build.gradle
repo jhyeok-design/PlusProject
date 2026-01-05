@@ -55,7 +55,8 @@ dependencies {
     //Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-
+    //DataFaker
+    implementation 'net.datafaker:datafaker:2.4.0'
 }
 
 tasks.named('test') {
