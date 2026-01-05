@@ -10,7 +10,6 @@ import com.example.plusproject.domain.product.model.response.ProductCreateRespon
 import com.example.plusproject.domain.product.model.response.ProductReadResponse;
 import com.example.plusproject.domain.product.model.response.ProductUpdateResponse;
 import com.example.plusproject.domain.product.repository.ProductRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -95,7 +94,7 @@ public class ProductService {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public ProductUpdateResponse updateProduct(@Valid ProductUpdateRequest request, Long productId) {
+    public ProductUpdateResponse updateProduct(ProductUpdateRequest request, Long productId) {
 
         Product product = readProductIdOrException(productId);
 
