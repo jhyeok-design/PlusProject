@@ -1,9 +1,9 @@
 package com.example.plusproject.domain.search.controller;
 
 import com.example.plusproject.common.model.CommonResponse;
+import com.example.plusproject.domain.product.model.response.ProductReadResponse;
 import com.example.plusproject.domain.search.entity.Search;
 import com.example.plusproject.domain.search.service.SearchService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -31,5 +32,24 @@ public class SearchController {
         Page<Search> response = searchService.getPopularKeywords(pageable);
 
         return ResponseEntity.ok(CommonResponse.success("인기 검색어 조회 성공", response));
+    }
+
+    /**
+     * 상품 검색
+     */
+    @GetMapping
+    public ResponseEntity<?> readProductBySearchQuery(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam String name,
+            @RequestParam Long price
+            ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductReadResponse> response = searchService.readProductBySearchQuery(
+                pageable,
+                name,
+                price
+        );
+        return ResponseEntity.ok(CommonResponse.success("검색 완료", response));
     }
 }
