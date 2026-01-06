@@ -54,6 +54,10 @@ dependencies {
 
     //DataFaker
     implementation 'net.datafaker:datafaker:2.4.0'
+
+    //Cache
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'com.github.ben-manes.caffeine:caffeine'
 }
 
 tasks.named('test') {

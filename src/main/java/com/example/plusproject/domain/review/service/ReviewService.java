@@ -17,7 +17,9 @@ import com.example.plusproject.domain.review.repository.ReviewRepository;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +61,6 @@ public class ReviewService {
     /**
      * 리뷰 단 건 조회 비즈니스 로직
      */
-//    @Cacheable(value = "reviewCache", key = "#reviewId")
     @Transactional(readOnly = true)
     public ReviewReadResponse readReview(Long reviewId) {
         
@@ -73,7 +74,9 @@ public class ReviewService {
     /**
      * 상품 별 리뷰 전체 조회 비즈니스 로직
      */
-//    @Cacheable(value = "productReviewCache", key = "#productId")
+    @Cacheable(
+            value = "productReviewCache",
+            key = "'product:' + #productId + ':page:' + #page + ':size:' + #size + ':sort:' + #sort")
     @Transactional(readOnly = true)
     public Page<ReviewReadResponse> readReviewWithProduct(Long productId, Integer page, Integer size, String sort) {
 
@@ -87,7 +90,10 @@ public class ReviewService {
     /**
      * 유저 별 리뷰 전체 조회 비즈니스 로직 (내 리뷰 전체 조회)
      */
-//    @Cacheable(value = "myReviewCache", key = "#authUser.userId")
+    @Cacheable(
+            value = "myReviewCache",
+            key = "'user:' + #authUser.userId + ':keyword:' + #keyword + ':page:' + #page + ':size:' + #size + ':sort:' + #sort",
+            condition = "#keyword == null")
     @Transactional(readOnly = true)
     public Slice<ReviewReadResponse> readReviewWithMe(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
 
@@ -101,6 +107,10 @@ public class ReviewService {
     /**
      * 리뷰 수정 비즈니스 로직
      */
+    @Caching(evict = {
+            @CacheEvict(value = "productReviewCache", allEntries = true),
+            @CacheEvict(value = "myReviewCache", allEntries = true)
+    })
     @Transactional
     public ReviewUpdateResponse updateReview(AuthUser authUser, Long reviewId, ReviewUpdateRequest request) {
 
@@ -121,6 +131,10 @@ public class ReviewService {
     /**
      * 리뷰 삭제 비즈니스 로직
      */
+    @Caching(evict = {
+            @CacheEvict(value = "productReviewCache", allEntries = true),
+            @CacheEvict(value = "myReviewCache", allEntries = true)
+    })
     @Transactional
     public void deleteReview(AuthUser authUser, Long reviewId) {
 
