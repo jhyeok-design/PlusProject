@@ -1,6 +1,5 @@
 package com.example.plusproject.domain.user.model.response;
-
-import com.example.plusproject.domain.user.entity.User;
+import com.example.plusproject.domain.user.model.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -18,7 +17,7 @@ public class UserUpdateResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public static UserUpdateResponse from(User user) {
+    public static UserUpdateResponse from(UserDto user) {
         return new UserUpdateResponse(
                 user.getId(),
                 user.getEmail(),
