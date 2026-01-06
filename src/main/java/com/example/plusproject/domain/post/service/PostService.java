@@ -19,6 +19,7 @@ import com.example.plusproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
+    private final PostCacheService postCacheService;
 
     @Transactional
     public PostCreateResponse createPost(AuthUser authUser, PostCreateRequest request) {
@@ -120,16 +122,36 @@ public class PostService {
         return page.map(PostReadResponse::from);
     }
 
-    @Cacheable(value = "postCache", key = "'kw=' + (#keyword ?: 'ALL') + " +
-            "':nick=' + (#nickname ?: 'ALL') + " +
-            "':page=' + #pageable.pageNumber + " +
-            "':size=' + #pageable.pageSize + " +
-            "':sort=' + #pageable.sort")
+//    @Cacheable(value = "postCache",
+//            key = "'keyword=' + (#keyword != null ? #keyword : 'ALL') + " +
+//                    "', nickname=' + (#nickname != null ? #nickname : 'ALL')",
+//            condition = "#pageable.pageNumber == 0"
+//    )
+//    @Transactional(readOnly = true)
+//    public Page<PostReadResponse> searchPostPageV2(String keyword, String nickname, Pageable pageable) {
+//
+//        Page<PostDto> page = postRepository.searchByConditions(keyword, nickname, pageable);
+//
+//        return page.map(PostReadResponse::from);
+//    }
+
     @Transactional(readOnly = true)
-    public Page<PostReadResponse> searchPostPageV2(String keyword, String nickname, Pageable pageable) {
+    public Page<PostReadResponse> searchPostPageV3(String keyword, String nickname, Pageable pageable) {
+
+        if (pageable.getPageNumber()==0){
+            List<PostReadResponse> cached = postCacheService.readPostCache(keyword,nickname);
+            if (cached!=null){
+                return new PageImpl<>(cached,pageable,cached.size());
+            }
+        }
 
         Page<PostDto> page = postRepository.searchByConditions(keyword, nickname, pageable);
 
-        return page.map(PostReadResponse::from);
+        Page<PostReadResponse> result = page.map(PostReadResponse::from);
+
+        if(pageable.getPageNumber()==0){
+            postCacheService.savePostCache(keyword, nickname,result.getContent());
+        }
+        return result;
     }
 }

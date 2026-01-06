@@ -91,12 +91,21 @@ public class PostController {
         return ResponseEntity.ok(CommonResponse.success("게시글 검색 성공", result));
     }
 
+    //    /*
+//     * 검색기능 v2 cache적용
+//     * */
+//    @GetMapping("/searchV2")
+//    public ResponseEntity<CommonResponse<Page<PostReadResponse>>> searchPostPageV2(@RequestParam(required = false) String keyword, @RequestParam(required = false) String nickname, Pageable pageable) {
+//        Page<PostReadResponse> result = postService.searchPostPageV2(keyword, nickname, pageable);
+//
+//        return ResponseEntity.ok(CommonResponse.success("게시글 검색 성공", result));
+//    }
     /*
-     * 검색기능 v2 cache적용
+     * 검색기능 v3 redis적용
      * */
-    @GetMapping("/searchV2")
-    public ResponseEntity<CommonResponse<Page<PostReadResponse>>> searchPostPageV2(@RequestParam(required = false) String keyword, @RequestParam(required = false) String nickname, Pageable pageable) {
-        Page<PostReadResponse> result = postService.searchPostPageV2(keyword, nickname, pageable);
+    @GetMapping("/searchV3")
+    public ResponseEntity<CommonResponse<Page<PostReadResponse>>> searchPostPageV3(@RequestParam(required = false) String keyword, @RequestParam(required = false) String nickname, Pageable pageable) {
+        Page<PostReadResponse> result = postService.searchPostPageV3(keyword, nickname, pageable);
 
         return ResponseEntity.ok(CommonResponse.success("게시글 검색 성공", result));
     }
