@@ -89,6 +89,7 @@ public class PostService {
         );
 
         PostDto dto = PostDto.from(post);
+        postCacheService.evictPost();
         return PostUpdateResponse.from(dto);
     }
 
@@ -99,6 +100,7 @@ public class PostService {
 
         commentRepository.deleteByPostId(postId);
         postRepository.delete(post);
+        postCacheService.evictPost();
     }
 
 

@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -31,6 +32,13 @@ public class PostCacheService {
     public void savePostCache(String keyword, String nickname, List<PostReadResponse> responses) {
 
         redisTemplate.opsForValue().set(key(keyword, nickname), responses, 10, TimeUnit.MINUTES);
+    }
+
+    public void evictPost(){
+        Set<String> keys =redisTemplate.keys("post:*");
+        if (keys != null && !keys.isEmpty()){
+            redisTemplate.delete(keys);
+        }
     }
 
 }
