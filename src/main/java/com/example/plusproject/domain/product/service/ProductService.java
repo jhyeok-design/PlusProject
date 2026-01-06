@@ -11,6 +11,7 @@ import com.example.plusproject.domain.product.model.response.ProductReadResponse
 import com.example.plusproject.domain.product.model.response.ProductUpdateResponse;
 import com.example.plusproject.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductCacheService productCacheService;
 
     /**
      * 상품 생성
@@ -64,14 +66,25 @@ public class ProductService {
      * 상품명 검색 v2
      * - 사용자 모두 조회 가능
      */
+//    @Cacheable(value = "productCache", key = "'productName :' + #name")
     @Transactional(readOnly = true)
     public List<ProductReadResponse> readProductByName(String name) {
 
-        List<Product> productsByName = productRepository.findAllByNameContaining(name);
+        List<ProductReadResponse> cached = productCacheService.readProductCache(name);
 
-        return productsByName.stream()
+        if (cached != null) {
+            return cached;
+        }
+
+        List<Product> products = productRepository.findAllByNameContaining(name);
+
+        List<ProductReadResponse> responses = products.stream()
                 .map(p -> ProductReadResponse.from(ProductDto.from(p)))
                 .toList();
+
+        productCacheService.saveProductCache(name, responses);
+
+        return responses;
     }
 
     /**
