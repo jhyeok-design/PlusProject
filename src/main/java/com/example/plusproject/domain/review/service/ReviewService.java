@@ -3,6 +3,7 @@ package com.example.plusproject.domain.review.service;
 import com.example.plusproject.common.enums.ExceptionCode;
 import com.example.plusproject.common.exception.CustomException;
 import com.example.plusproject.common.model.AuthUser;
+import com.example.plusproject.common.model.SliceResponse;
 import com.example.plusproject.domain.product.entity.Product;
 import com.example.plusproject.domain.product.repository.ProductRepository;
 import com.example.plusproject.domain.review.entity.Review;
@@ -32,6 +33,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
     private final ReviewQueryRepository reviewQueryRepository;
+    private final ReviewCacheService reviewCacheService;
 
     /**
      * 리뷰 생성 비즈니스 로직
@@ -72,7 +74,8 @@ public class ReviewService {
     }
 
     /**
-     * 상품 별 리뷰 전체 조회 비즈니스 로직
+     * 상품 별 리뷰 전체 조회 v2
+     * 로컬 캐시로 성능 개선
      */
     @Cacheable(
             value = "productReviewCache",
@@ -88,20 +91,36 @@ public class ReviewService {
     }
 
     /**
-     * 유저 별 리뷰 전체 조회 비즈니스 로직 (내 리뷰 전체 조회)
+     * 유저 별 리뷰 전체 조회 (내 리뷰 전체 조회) v2
+     * Redis 캐시로 성능 개선
      */
-    @Cacheable(
-            value = "myReviewCache",
-            key = "'user:' + #authUser.userId + ':keyword:' + #keyword + ':page:' + #page + ':size:' + #size + ':sort:' + #sort",
-            condition = "#keyword == null")
+//    @Cacheable(
+//            value = "myReviewCache",
+//            key = "'user:' + #authUser.userId + ':keyword:' + #keyword + ':page:' + #page + ':size:' + #size + ':sort:' + #sort",
+//            condition = "#keyword == null")
     @Transactional(readOnly = true)
-    public Slice<ReviewReadResponse> readReviewWithMe(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
+    public SliceResponse<ReviewReadResponse> readReviewWithMe(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
+
+        // Redis에서 읽기
+        SliceResponse<ReviewReadResponse> cached = reviewCacheService.readReviewWithMeCache(authUser, keyword, page, size, sort);
+
+        // Redis에 있으면 바로 리턴
+        if (cached != null) {
+            return cached;
+        }
 
         Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
 
-        return reviewQueryRepository.readReviewWithMeSortBy(authUser.getUserId(), keyword, pageable, sort);
+        Slice<ReviewReadResponse> response = reviewQueryRepository.readReviewWithMeSortBy(authUser.getUserId(), keyword, pageable, sort);
+
+        SliceResponse<ReviewReadResponse> sliceResponse = SliceResponse.from(response);
+
+        // Redis에 저장
+        reviewCacheService.saveReviewWithMeCache(authUser, keyword, page, size, sort, sliceResponse);
+        
+        return sliceResponse;
     }
 
     /**

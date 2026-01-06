@@ -2,6 +2,7 @@ package com.example.plusproject.domain.review.controller;
 
 import com.example.plusproject.common.model.AuthUser;
 import com.example.plusproject.common.model.CommonResponse;
+import com.example.plusproject.common.model.SliceResponse;
 import com.example.plusproject.domain.review.model.request.ReviewCreateRequest;
 import com.example.plusproject.domain.review.model.request.ReviewUpdateRequest;
 import com.example.plusproject.domain.review.model.response.ReviewCreateResponse;
@@ -11,7 +12,6 @@ import com.example.plusproject.domain.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -67,7 +67,7 @@ public class ReviewController {
      * 유저 별 리뷰 전체 조회 API (내 리뷰 전체 조회)
      */
     @GetMapping("/my-review")
-    public ResponseEntity<CommonResponse<Slice<ReviewReadResponse>>> readReviewWithMe(
+    public ResponseEntity<CommonResponse<SliceResponse<ReviewReadResponse>>> readReviewWithMe(
             @AuthenticationPrincipal AuthUser authUser,
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") Integer page,

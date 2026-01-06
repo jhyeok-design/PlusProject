@@ -95,7 +95,6 @@ public class ReviewQueryRepository {
 
     private boolean hasNext(List<ReviewReadResponse> result, int pageSize) {
 
-        // 하나
         if (result.size() > pageSize) {
             result.remove(pageSize);
             return true;
