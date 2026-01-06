@@ -83,7 +83,7 @@ public class ReviewBulkInsertService {
                 ps.setString(3, review.getContent());
                 ps.setInt(4, review.getScore());
                 ps.setTimestamp(5, Timestamp.valueOf(review.getCreatedAt()));
-                ps.setTimestamp(    6, Timestamp.valueOf(review.getUpdatedAt()));
+                ps.setTimestamp(6, Timestamp.valueOf(review.getUpdatedAt()));
             });
         }
 
