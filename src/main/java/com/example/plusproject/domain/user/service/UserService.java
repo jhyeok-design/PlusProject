@@ -10,6 +10,8 @@ import com.example.plusproject.domain.user.model.response.UserReadResponse;
 import com.example.plusproject.domain.user.model.response.UserUpdateResponse;
 import com.example.plusproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 
 import static com.example.plusproject.common.enums.ExceptionCode.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -102,6 +105,10 @@ public class UserService {
     /**
      * 유저 검색
      * */
+    @Cacheable(
+            cacheNames = "userSearch",
+            key = "T(java.util.Objects).hash(#pageable, #domain, #name, #createdAt)"
+    )
     @Transactional(readOnly = true)
     public Page<UserReadResponse> readUserByQuery(AuthUser authUser,
                                 Pageable pageable,
@@ -110,11 +117,11 @@ public class UserService {
                                 LocalDateTime createdAt
     ) {
         // 1. 유저 id 조회 / 없으면 예외처리
-
         User user = userRepository.findById(authUser.getUserId())
                 .orElseThrow(()->new CustomException(NOT_FOUND_USER));
 
         // 2. 쿼리dsl 로 조회
         return userRepository.readUserByQuery(pageable, domain, name, createdAt);
     }
+
 }
