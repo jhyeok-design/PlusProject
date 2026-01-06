@@ -39,7 +39,7 @@ public class OrderService {
         );
 
         // request의 상품 조회 / 없으면 예외 처리
-        Product product = productRepository.findByName(request.getProductName()).orElseThrow(
+        Product product = productRepository.findByNameForUpdate(request.getProductName()).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT)
         );
 
