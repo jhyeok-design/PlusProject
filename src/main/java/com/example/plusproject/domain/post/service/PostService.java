@@ -3,6 +3,7 @@ package com.example.plusproject.domain.post.service;
 import com.example.plusproject.common.enums.ExceptionCode;
 import com.example.plusproject.common.exception.CustomException;
 import com.example.plusproject.common.model.AuthUser;
+import com.example.plusproject.domain.comment.model.CommentDto;
 import com.example.plusproject.domain.comment.model.response.CommentReadResponse;
 import com.example.plusproject.domain.comment.repository.CommentRepository;
 import com.example.plusproject.domain.post.entity.Post;
@@ -17,7 +18,9 @@ import com.example.plusproject.domain.post.repository.PostRepository;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +34,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
+    private final PostCacheService postCacheService;
 
     @Transactional
     public PostCreateResponse createPost(AuthUser authUser, PostCreateRequest request) {
@@ -58,6 +62,7 @@ public class PostService {
         List<CommentReadResponse> comments = commentRepository
                 .findAllByPostIdOrderByCreatedAtDesc(postId)
                 .stream()
+                .map(CommentDto::from)
                 .map(CommentReadResponse::from)
                 .toList();
 
@@ -86,6 +91,7 @@ public class PostService {
         );
 
         PostDto dto = PostDto.from(post);
+        postCacheService.evictPost();
         return PostUpdateResponse.from(dto);
     }
 
@@ -96,6 +102,7 @@ public class PostService {
 
         commentRepository.deleteByPostId(postId);
         postRepository.delete(post);
+        postCacheService.evictPost();
     }
 
 
@@ -113,9 +120,42 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PostReadResponse> searchPostList(String keyword, String nickname, Pageable pageable) {
+    public Page<PostReadResponse> searchPostPage(String keyword, String nickname, Pageable pageable) {
         Page<PostDto> page = postRepository.searchByConditions(keyword, nickname, pageable);
 
         return page.map(PostReadResponse::from);
+    }
+
+//    @Cacheable(value = "postCache",
+//            key = "'keyword=' + (#keyword != null ? #keyword : 'ALL') + " +
+//                    "', nickname=' + (#nickname != null ? #nickname : 'ALL')",
+//            condition = "#pageable.pageNumber == 0"
+//    )
+//    @Transactional(readOnly = true)
+//    public Page<PostReadResponse> searchPostPageV2(String keyword, String nickname, Pageable pageable) {
+//
+//        Page<PostDto> page = postRepository.searchByConditions(keyword, nickname, pageable);
+//
+//        return page.map(PostReadResponse::from);
+//    }
+
+    @Transactional(readOnly = true)
+    public Page<PostReadResponse> searchPostPageV3(String keyword, String nickname, Pageable pageable) {
+
+        if (pageable.getPageNumber()==0){
+            List<PostReadResponse> cached = postCacheService.readPostCache(keyword,nickname);
+            if (cached!=null){
+                return new PageImpl<>(cached,pageable,cached.size());
+            }
+        }
+
+        Page<PostDto> page = postRepository.searchByConditions(keyword, nickname, pageable);
+
+        Page<PostReadResponse> result = page.map(PostReadResponse::from);
+
+        if(pageable.getPageNumber()==0){
+            postCacheService.savePostCache(keyword, nickname,result.getContent());
+        }
+        return result;
     }
 }

@@ -63,7 +63,7 @@ public class PostRepositoryImpl implements CustomPostRepository {
                 .join(post.user, user)
                 .where(
                         keywordContains(keyword),
-                        nicknamecontains(nickname)
+                        nicknameContains(nickname)
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -89,7 +89,7 @@ public class PostRepositoryImpl implements CustomPostRepository {
         return post.title.containsIgnoreCase(keyword);
     }
 
-    private BooleanExpression nicknamecontains(String nickname) {
+    private BooleanExpression nicknameContains(String nickname) {
         if (nickname == null || nickname.isBlank()) {
             return null;
         }
