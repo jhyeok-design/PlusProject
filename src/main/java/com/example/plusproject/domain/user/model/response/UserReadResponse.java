@@ -3,11 +3,12 @@ import com.example.plusproject.domain.user.model.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
-public class UserReadResponse {
+public class UserReadResponse implements Serializable {
     private Long id;
     private String email;
     private String name;

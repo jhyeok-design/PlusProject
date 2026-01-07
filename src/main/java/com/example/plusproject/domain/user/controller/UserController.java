@@ -2,6 +2,7 @@ package com.example.plusproject.domain.user.controller;
 
 import com.example.plusproject.common.model.AuthUser;
 import com.example.plusproject.common.model.CommonResponse;
+import com.example.plusproject.domain.search.service.SearchService;
 import com.example.plusproject.domain.user.model.request.UserUpdateRequest;
 import com.example.plusproject.domain.user.model.response.UserReadResponse;
 import com.example.plusproject.domain.user.model.response.UserUpdateResponse;
@@ -21,7 +22,7 @@ import java.time.LocalDateTime;
 public class UserController {
 
     private final UserService userService;
-
+    private final SearchService searchService;
     /**
      * 유저 마이페이지 조회
      * */
@@ -65,19 +66,62 @@ public class UserController {
     }
 
     /**
-     * 유저 검색
+     * 유저 검색 v1
      * */
-    @GetMapping("/search")
+    @GetMapping("/search-v1")
     public ResponseEntity<CommonResponse<?>> readUserByQuery(@AuthenticationPrincipal AuthUser authUser,
                                                              @PageableDefault(page = 0, size = 10) Pageable pageable,
                                                              @RequestParam(required = false) String domain,
                                                              @RequestParam(required = false) String name,
                                                              @RequestParam(required = false)LocalDateTime createdAt
-                                                             ) {
+    ) {
+
+        // 검색어 집계
+        searchService.recordSearch(domain);
 
         return ResponseEntity.ok(CommonResponse.success(
                 "유저 목록 조회 성공",
                 userService.readUserByQuery(authUser, pageable, domain, name, createdAt)
         ));
     }
+
+    /**
+     * 유저 검색 v2 - 캐시 사용
+     * */
+    @GetMapping("/search-v2")
+    public ResponseEntity<CommonResponse<?>> readUserByQueryInmemoryCache(@AuthenticationPrincipal AuthUser authUser,
+                                                             @PageableDefault(page = 0, size = 10) Pageable pageable,
+                                                             @RequestParam(required = false) String domain,
+                                                             @RequestParam(required = false) String name,
+                                                             @RequestParam(required = false)LocalDateTime createdAt
+                                                             ) {
+
+        // 검색어 집계
+        searchService.recordSearch(domain);
+
+        return ResponseEntity.ok(CommonResponse.success(
+                "유저 목록 조회 성공",
+                userService.readUserByQueryInmemoryCache(authUser, pageable, domain, name, createdAt)
+        ));
+    }
+
+    /**
+     * 유저 검색 v3 - 캐시 사용
+     * */
+    @GetMapping("/search-v3")
+    public ResponseEntity<CommonResponse<?>> readUserByQueryRedis(@AuthenticationPrincipal AuthUser authUser,
+                                                             @PageableDefault(page = 0, size = 10) Pageable pageable,
+                                                             @RequestParam(required = false) String domain,
+                                                             @RequestParam(required = false) String name,
+                                                             @RequestParam(required = false)LocalDateTime createdAt
+    ) {
+
+
+        return ResponseEntity.ok(CommonResponse.success(
+                "유저 목록 조회 성공",
+                userService.readUserByQueryRedis(authUser, pageable, domain, name, createdAt)
+        ));
+    }
+
+
 }
