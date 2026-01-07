@@ -8,6 +8,7 @@ import com.example.plusproject.domain.review.model.request.ReviewUpdateRequest;
 import com.example.plusproject.domain.review.model.response.ReviewCreateResponse;
 import com.example.plusproject.domain.review.model.response.ReviewReadResponse;
 import com.example.plusproject.domain.review.model.response.ReviewUpdateResponse;
+import com.example.plusproject.domain.review.service.ReviewRankingService;
 import com.example.plusproject.domain.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +18,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/reviews")
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final ReviewRankingService reviewRankingService;
 
     /**
      * 리뷰 생성 API
@@ -49,7 +53,7 @@ public class ReviewController {
     }
 
     /**
-     * 상품 별 리뷰 전체 조회 API
+     * 상품 별 리뷰 전체 조회 API v2
      */
     @GetMapping
     public ResponseEntity<CommonResponse<Page<ReviewReadResponse>>> readReviewWithProduct(
@@ -64,7 +68,7 @@ public class ReviewController {
     }
 
     /**
-     * 유저 별 리뷰 전체 조회 API (내 리뷰 전체 조회)
+     * 유저 별 리뷰 전체 조회 API (내 리뷰 전체 조회) v2
      */
     @GetMapping("/my-review")
     public ResponseEntity<CommonResponse<SliceResponse<ReviewReadResponse>>> readReviewWithMe(
@@ -77,6 +81,17 @@ public class ReviewController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(CommonResponse.success("내 리뷰 전체 조회 완료", reviewService.readReviewWithMe(authUser, keyword, page, size, sort)));
+    }
+
+    /**
+     * 리뷰 좋아요 순위 조회 API
+     */
+    @GetMapping("/popular")
+    public ResponseEntity<CommonResponse<List<ReviewReadResponse>>> readPopularReviewTop10(@RequestParam Long productId) {
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.success("조회수 TOP 10 리뷰 조회 완료", reviewRankingService.readPopularReviewTop10(productId)));
     }
 
     /**

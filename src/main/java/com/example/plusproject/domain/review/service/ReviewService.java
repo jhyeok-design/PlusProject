@@ -34,6 +34,7 @@ public class ReviewService {
     private final ProductRepository productRepository;
     private final ReviewQueryRepository reviewQueryRepository;
     private final ReviewCacheService reviewCacheService;
+    private final ReviewRankingService reviewRankingService;
 
     /**
      * 리뷰 생성 비즈니스 로직
@@ -70,6 +71,8 @@ public class ReviewService {
 
         ReviewDto foundReview = ReviewDto.from(review);
 
+        reviewRankingService.increaseViewCount(foundReview.getProduct().getId(), reviewId);
+
         return ReviewReadResponse.from(foundReview);
     }
 
@@ -90,14 +93,70 @@ public class ReviewService {
         return reviewQueryRepository.readReviewWithProductSortBy(productId, pageable, sort);
     }
 
-    /**
-     * 유저 별 리뷰 전체 조회 (내 리뷰 전체 조회) v2
-     * Redis 캐시로 성능 개선
-     */
+//    /**
+//     * 유저 별 리뷰 전체 조회 (내 리뷰 전체 조회) v1
+//     */
+//    @Transactional(readOnly = true)
+//    public SliceResponse<ReviewReadResponse> readReviewWithMe(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
+//
+//        // Redis에서 읽기
+//        SliceResponse<ReviewReadResponse> cached = reviewCacheService.readReviewWithMeCache(authUser, keyword, page, size, sort);
+//
+//        // Redis에 있으면 바로 리턴
+//        if (cached != null) {
+//            return cached;
+//        }
+//
+//        Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
+//
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
+//
+//        Slice<ReviewReadResponse> response = reviewQueryRepository.readReviewWithMeSortBy(authUser.getUserId(), keyword, pageable, sort);
+//
+//        SliceResponse<ReviewReadResponse> sliceResponse = SliceResponse.from(response);
+//
+//        // Redis에 저장
+//        reviewCacheService.saveReviewWithMeCache(authUser, keyword, page, size, sort, sliceResponse);
+//
+//        return sliceResponse;
+//    }
+
+//    /**
+//     * 유저 별 리뷰 전체 조회 (내 리뷰 전체 조회) v2
+//     * Redis 캐시로 성능 개선
+//     */
 //    @Cacheable(
 //            value = "myReviewCache",
-//            key = "'user:' + #authUser.userId + ':keyword:' + #keyword + ':page:' + #page + ':size:' + #size + ':sort:' + #sort",
-//            condition = "#keyword == null")
+//            key = "'user:' + #authUser.userId + ':keyword:' + #keyword + ':page:' + #page + ':size:' + #size + ':sort:' + #sort")
+//    @Transactional(readOnly = true)
+//    public SliceResponse<ReviewReadResponse> readReviewWithMe(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
+//
+//        // Redis에서 읽기
+//        SliceResponse<ReviewReadResponse> cached = reviewCacheService.readReviewWithMeCache(authUser, keyword, page, size, sort);
+//
+//        // Redis에 있으면 바로 리턴
+//        if (cached != null) {
+//            return cached;
+//        }
+//
+//        Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
+//
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
+//
+//        Slice<ReviewReadResponse> response = reviewQueryRepository.readReviewWithMeSortBy(authUser.getUserId(), keyword, pageable, sort);
+//
+//        SliceResponse<ReviewReadResponse> sliceResponse = SliceResponse.from(response);
+//
+//        // Redis에 저장
+//        reviewCacheService.saveReviewWithMeCache(authUser, keyword, page, size, sort, sliceResponse);
+//
+//        return sliceResponse;
+//    }
+
+    /**
+     * 유저 별 리뷰 전체 조회 (내 리뷰 전체 조회) v3
+     * Redis 캐시로 성능 개선
+     */
     @Transactional(readOnly = true)
     public SliceResponse<ReviewReadResponse> readReviewWithMe(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
 
