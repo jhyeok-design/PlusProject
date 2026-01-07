@@ -17,12 +17,16 @@ public class ProductCacheService {
 
     @SuppressWarnings("unchecked")
     public List<ProductReadResponse> readProductCache(String name) {
+
         String key = CACHE_PRODUCT_PREFIX + name.trim().replaceAll("\\s+", "");
+
         return (List<ProductReadResponse>) redisTemplate.opsForValue().get(key);
     }
 
     public void saveProductCache(String name, List<ProductReadResponse> responses) {
+
         String key = CACHE_PRODUCT_PREFIX + name.trim().replaceAll("\\s+", "");
+
         redisTemplate.opsForValue().set(key, responses, 10, TimeUnit.MINUTES);
     }
 }
