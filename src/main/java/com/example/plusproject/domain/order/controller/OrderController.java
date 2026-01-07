@@ -86,15 +86,15 @@ public class OrderController {
     /**
      * 검색 - v1
      */
-    @GetMapping("/searchV1")
-    public ResponseEntity<CommonResponse<OrderPageResponse<OrderResponse>>> searchV1(
-            @RequestParam String keyword,
-            @PageableDefault(page = 0, size = 10) Pageable pageable) {
-
-        OrderPageResponse<OrderResponse> response = orderService.searchV1(keyword, pageable);
-
-        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V1 조회 성공", response));
-    }
+//    @GetMapping("/searchV1")
+//    public ResponseEntity<CommonResponse<OrderPageResponse<OrderResponse>>> searchV1(
+//            @RequestParam String keyword,
+//            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+//
+//        OrderPageResponse<OrderResponse> response = orderService.searchV1(keyword, pageable);
+//
+//        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V1 조회 성공", response));
+//    }
 
 
     /**
@@ -112,17 +112,17 @@ public class OrderController {
 
 
 
-    //    /**
-//     * 검색 - v3
-//     */
-//    @GetMapping("/searchV3")
-//    public ResponseEntity<CommonResponse<OrderPageResponse<OrderResponse>>> searchV3(
-//            @RequestParam String keyword,
-//            Pageable pageable
-//    ) {
-//        OrderPageResponse<OrderResponse> response = orderService.searchV3(keyword, pageable);
-//
-//        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V3 조회 성공", response));
-//    }
+        /**
+     * 검색 - v3
+     */
+    @GetMapping("/searchV3")
+    public ResponseEntity<CommonResponse<OrderPageResponse<OrderResponse>>> searchV3(
+            @RequestParam String keyword,
+            Pageable pageable
+    ) {
+        OrderPageResponse<OrderResponse> response = orderService.searchV3(keyword, pageable);
+
+        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V3 조회 성공", response));
+    }
 
 }
