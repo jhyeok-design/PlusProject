@@ -14,7 +14,9 @@ import com.example.plusproject.domain.product.repository.ProductRepository;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ public class OrderService {
     /**
      * 주문 생성
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public OrderCreateResponse createOrder(AuthUser authUser, OrderCreateRequest request) {
         // 사용자 조회 / 없으면 예외 처리
         User user = userRepository.findById(authUser.getUserId()).orElseThrow(
@@ -39,7 +41,7 @@ public class OrderService {
         );
 
         // request의 상품 조회 / 없으면 예외 처리
-        Product product = productRepository.findByNameForUpdate(request.getProductName()).orElseThrow(
+        Product product = productRepository.findByName(request.getProductName()).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT)
         );
 
@@ -130,4 +132,24 @@ public class OrderService {
         // 삭제
         order.softDelete();
     }
+
+//    public OrderCreateResponse createOrder(AuthUser authUser, OrderCreateRequest request) {
+//
+//        int retry = 0;
+//
+//        while (retry < 10) {
+//            try {
+//                return createOrderTransactional(authUser, request);
+//            } catch (ObjectOptimisticLockingFailureException e) {
+//                retry++;
+//                try {
+//                    Thread.sleep(100);
+//                } catch (InterruptedException ignored) {}
+//            }
+//        }
+//
+//        throw new IllegalStateException("10회 재시도 후 실패");
+//    }
+
+
 }
