@@ -99,26 +99,14 @@ public class ReviewService {
 //    @Transactional(readOnly = true)
 //    public SliceResponse<ReviewReadResponse> readReviewWithMe(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
 //
-//        // Redis에서 읽기
-//        SliceResponse<ReviewReadResponse> cached = reviewCacheService.readReviewWithMeCache(authUser, keyword, page, size, sort);
-//
-//        // Redis에 있으면 바로 리턴
-//        if (cached != null) {
-//            return cached;
-//        }
-//
 //        Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
 //
 //        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
 //
 //        Slice<ReviewReadResponse> response = reviewQueryRepository.readReviewWithMeSortBy(authUser.getUserId(), keyword, pageable, sort);
 //
-//        SliceResponse<ReviewReadResponse> sliceResponse = SliceResponse.from(response);
+//        return SliceResponse.from(response);
 //
-//        // Redis에 저장
-//        reviewCacheService.saveReviewWithMeCache(authUser, keyword, page, size, sort, sliceResponse);
-//
-//        return sliceResponse;
 //    }
 
 //    /**
@@ -131,26 +119,13 @@ public class ReviewService {
 //    @Transactional(readOnly = true)
 //    public SliceResponse<ReviewReadResponse> readReviewWithMe(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
 //
-//        // Redis에서 읽기
-//        SliceResponse<ReviewReadResponse> cached = reviewCacheService.readReviewWithMeCache(authUser, keyword, page, size, sort);
-//
-//        // Redis에 있으면 바로 리턴
-//        if (cached != null) {
-//            return cached;
-//        }
-//
 //        Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
 //
 //        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
 //
 //        Slice<ReviewReadResponse> response = reviewQueryRepository.readReviewWithMeSortBy(authUser.getUserId(), keyword, pageable, sort);
 //
-//        SliceResponse<ReviewReadResponse> sliceResponse = SliceResponse.from(response);
-//
-//        // Redis에 저장
-//        reviewCacheService.saveReviewWithMeCache(authUser, keyword, page, size, sort, sliceResponse);
-//
-//        return sliceResponse;
+//        return SliceResponse.from(response);
 //    }
 
     /**
@@ -178,7 +153,7 @@ public class ReviewService {
 
         // Redis에 저장
         reviewCacheService.saveReviewWithMeCache(authUser, keyword, page, size, sort, sliceResponse);
-        
+
         return sliceResponse;
     }
 
