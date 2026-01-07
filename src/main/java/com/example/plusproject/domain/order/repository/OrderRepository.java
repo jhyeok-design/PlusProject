@@ -8,10 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long>, OrderCustomRepository {
-    // v2
-//    List<Order> findAllByProduct_NameContaining(String keyword);
 
-    // v3
+    // v2, v3
     Page<Order> findAllByProduct_NameContaining(String keyword, Pageable pageable);
 
 }
