@@ -33,10 +33,7 @@ public enum ExceptionCode {
     EXISTS_PRODUCT_NAME(HttpStatus.CONFLICT, "이미 사용중인 상품명 입니다."),
     OUT_OF_STOCK(HttpStatus.CONFLICT, "상품 재고가 부족합니다."),
 
-    NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
-
-    LOCK_ACQUISITION_FAILED(HttpStatus.TOO_MANY_REQUESTS, "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.")
-    ;
+    NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String message;

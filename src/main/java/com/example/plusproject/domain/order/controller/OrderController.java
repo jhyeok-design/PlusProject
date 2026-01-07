@@ -5,8 +5,6 @@ import com.example.plusproject.common.model.CommonResponse;
 import com.example.plusproject.domain.order.model.request.OrderCreateRequest;
 import com.example.plusproject.domain.order.model.response.OrderCreateResponse;
 import com.example.plusproject.domain.order.model.response.OrderReadResponse;
-import com.example.plusproject.domain.order.repository.OrderRepository;
-import com.example.plusproject.domain.order.service.OrderRedisService;
 import com.example.plusproject.domain.order.service.OrderService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,6 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-    private final OrderRedisService orderRedisService;
 
     /**
      * 주문 생성
@@ -32,7 +29,7 @@ public class OrderController {
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody OrderCreateRequest request
     ) {
-        OrderCreateResponse response = orderRedisService.createOrderWithLock(authUser, request);
+        OrderCreateResponse response = orderService.createOrder(authUser, request);
 
         return ResponseEntity.ok(CommonResponse.success("주문 생성 성공", response));
     }
