@@ -21,6 +21,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class OrderService {
         );
 
         // request의 상품 조회 / 없으면 예외 처리
-        Product product = productRepository.findByName(request.getProductName()).orElseThrow(
+        Product product = productRepository.findByNameForUpdate(request.getProductName()).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT)
         );
 
