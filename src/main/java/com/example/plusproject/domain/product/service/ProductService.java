@@ -2,6 +2,7 @@ package com.example.plusproject.domain.product.service;
 
 import com.example.plusproject.common.enums.ExceptionCode;
 import com.example.plusproject.common.exception.CustomException;
+import com.example.plusproject.domain.common.service.S3Service;
 import com.example.plusproject.domain.product.entity.Product;
 import com.example.plusproject.domain.product.model.ProductDto;
 import com.example.plusproject.domain.product.model.request.ProductCreateRequest;
@@ -15,6 +16,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductService {
 
+    private final S3Service s3Service;
     private final ProductRepository productRepository;
     private final ProductCacheService productCacheService;
 
@@ -32,7 +35,13 @@ public class ProductService {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public ProductCreateResponse createProduct(ProductCreateRequest request) {
+    public ProductCreateResponse createProduct(ProductCreateRequest request, MultipartFile image) {
+
+        String imageUrl = null;
+
+        if (image != null && !image.isEmpty()) {
+            imageUrl = s3Service.uploadImage(image);
+        }
 
         boolean existsName = productRepository.existsByName(request.getName());
 

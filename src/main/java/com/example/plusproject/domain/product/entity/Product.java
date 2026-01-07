@@ -37,6 +37,10 @@ public class Product extends BaseEntity {
     @Column(nullable = false, name = "is_deleted")
     private boolean isDeleted = false;
 
+    @Column(length = 500)
+    private String imageUrl;
+
+
     public Product(String name, Long price, String description, Long quantity){
         this.name = name;
         this.price = price;

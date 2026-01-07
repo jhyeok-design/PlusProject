@@ -57,6 +57,10 @@ dependencies {
 
     //DataFaker
     implementation 'net.datafaker:datafaker:2.4.0'
+
+    // AWS
+    implementation(platform("software.amazon.awssdk:bom:2.27.21"))
+    implementation("software.amazon.awssdk:s3")
 }
 
 tasks.named('test') {
