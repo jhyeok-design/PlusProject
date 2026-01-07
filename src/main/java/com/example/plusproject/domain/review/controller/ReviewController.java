@@ -84,7 +84,7 @@ public class ReviewController {
     }
 
     /**
-     * 리뷰 좋아요 순위 조회 API
+     * 리뷰 조회 수 순위 조회 API
      */
     @GetMapping("/popular")
     public ResponseEntity<CommonResponse<List<ReviewReadResponse>>> readPopularReviewTop10(@RequestParam Long productId) {
