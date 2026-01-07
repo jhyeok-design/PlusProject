@@ -1,27 +1,27 @@
 package com.example.plusproject.domain.order.model.response;
 
-import com.example.plusproject.domain.order.entity.Order;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 @Getter
-@Setter
-@NoArgsConstructor   // 기본 생성자 (Jackson용)
-@AllArgsConstructor  // 전체 필드 생성자
-public class OrderPageResponse {
+@NoArgsConstructor
+@AllArgsConstructor
+public class OrderPageResponse<T> {
+    private List<T> content;
+    private int page;
+    private int size;
+    private long totalElements;
+    private int totalPages;
 
-    private Long orderId;
-    private String productName;
-    private Long price;
-    private String username;
-
-    // 엔티티에서 DTO로 변환
-    public OrderPageResponse(Order order) {
-        this.orderId = order.getId();
-        this.productName = order.getProductName();
-        this.price = order.getProduct().getPrice();
-        this.username = order.getUser().getName(); // Lazy Proxy 문제 방지
+    public OrderPageResponse(Page<T> page) {
+        this.content = page.getContent();
+        this.page = page.getNumber();
+        this.size = page.getSize();
+        this.totalElements = page.getTotalElements();
+        this.totalPages = page.getTotalPages();
     }
 }

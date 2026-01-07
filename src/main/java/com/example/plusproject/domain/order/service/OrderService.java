@@ -8,6 +8,7 @@ import com.example.plusproject.domain.order.model.OrderDto;
 import com.example.plusproject.domain.order.model.request.OrderCreateRequest;
 import com.example.plusproject.domain.order.model.response.OrderCreateResponse;
 import com.example.plusproject.domain.order.model.response.OrderPageResponse;
+import com.example.plusproject.domain.order.model.response.OrderResponse;
 import com.example.plusproject.domain.order.model.response.OrderReadResponse;
 import com.example.plusproject.domain.order.repository.OrderRepository;
 import com.example.plusproject.domain.product.entity.Product;
@@ -16,7 +17,6 @@ import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,6 +33,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final OrderCacheService orderCacheService;
 
     /**
      * 주문 생성
@@ -141,27 +142,98 @@ public class OrderService {
     /**
      * 검색 - v1
      */
-    @Transactional(readOnly = true)
-    public Page<OrderPageResponse> searchV1(String keyword, Pageable pageable) {
-
-        Page<Order> orderPage = orderRepository.findAllByProduct_NameContaining(keyword, pageable);
-
-        return orderPage.map(OrderPageResponse::new);
-    }
+//    @Transactional(readOnly = true)
+//    public Page<OrderPageResponse> searchV1(String keyword, Pageable pageable) {
+//
+//        Page<Order> orderPage = orderRepository.findAllByProduct_NameContaining(keyword, pageable);
+//
+//        return orderPage.map(OrderPageResponse::new);
+//    }
 
 
     /**
      * 검색 - v2
      */
-    @Cacheable(value = "orderCache",
-            key = "'keyword: ' + #keyword + ':page:' + #pageable.pageNumber + ':size:' + #pageable.pageSize")
-    @Transactional(readOnly = true)
-    public Page<OrderPageResponse> searchV2(String keyword, Pageable pageable) {
-        
-        log.info("캐시에 없으니 DB에서 직접 조회!");
-        
-        Page<Order> orderPage = orderRepository.findAllByProduct_NameContaining(keyword, pageable);
 
-        return orderPage.map(OrderPageResponse::new);
+    /*
+//    @Cacheable(value = "orderCache",
+//            key = "'keyword: ' + #keyword + ':page:' + #pageable.pageNumber + ':size:' + #pageable.pageSize")
+//    @Cacheable(value = "orderCache",
+//            key = "'keyword: ' + #keyword")
+    @Transactional(readOnly = true)
+//    public Page<OrderPageResponse> searchV2(String keyword, Pageable pageable) {
+    public List<OrderResponse> searchV2(String keyword) {
+
+        List<OrderResponse> cached = orderCacheService.getOrderCache(keyword);
+
+        if (cached != null && !cached.isEmpty()) {
+            log.info("Redis Cache Hit {} ", keyword);
+            return cached;
+        }
+        
+        log.info("Redis Cache Miss {} ", keyword);
+        
+//        Page<Order> orderPage = orderRepository.findAllByProduct_NameContaining(keyword, pageable);
+        List<Order> orderList = orderRepository.findAllByProduct_NameContaining(keyword);
+
+        List<OrderResponse> responseList = orderList.stream()
+                .map(OrderResponse::from)
+                .toList();
+
+//        orderCacheService.saveOrderCache(keyword, orderPage);
+
+        if (!responseList.isEmpty()) {
+            orderCacheService.saveOrderCache(keyword, responseList);
+        }
+
+        return responseList;
     }
+*/
+
+    /**
+     * 검색 - v2
+     */
+//    @Cacheable(value = "orderCache",
+//            key = "'keyword: ' + #keyword + ':page:' + #pageable.pageNumber + ':size:' + #pageable.pageSize")
+//    @Cacheable(value = "orderCache",
+//            key = "'keyword: ' + #keyword")
+    @Transactional(readOnly = true)
+    public OrderPageResponse<OrderResponse> searchV3(String keyword, Pageable pageable) {
+
+        int page = pageable.getPageNumber();
+        int size = pageable.getPageSize();
+
+        OrderPageResponse<OrderResponse> cached =
+                orderCacheService.getOrderCache(keyword, page, size);
+
+        if (cached != null) {
+            log.info("Redis Cache Hit keyword={}, page={}, size={}", keyword, page, size);
+            return cached;
+        }
+
+        log.info("Redis Cache Miss keyword={}, page={}, size={}", keyword, page, size);
+
+        Page<Order> orderPage =
+                orderRepository.findAllByProduct_NameContaining(keyword, pageable);
+
+        List<OrderResponse> content =
+                orderPage.getContent()
+                        .stream()
+                        .map(OrderResponse::from)
+                        .toList();
+
+        OrderPageResponse<OrderResponse> response =
+                new OrderPageResponse<>(
+                        content,
+                        orderPage.getNumber(),
+                        orderPage.getSize(),
+                        orderPage.getTotalElements(),
+                        orderPage.getTotalPages()
+                );
+
+        orderCacheService.saveOrderCache(keyword, page, size, response);
+
+        return response;
+    }
+
 }

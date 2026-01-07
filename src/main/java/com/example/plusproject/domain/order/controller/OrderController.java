@@ -1,25 +1,16 @@
 package com.example.plusproject.domain.order.controller;
 
-import com.example.plusproject.common.enums.ExceptionCode;
-import com.example.plusproject.common.exception.CustomException;
 import com.example.plusproject.common.model.AuthUser;
 import com.example.plusproject.common.model.CommonResponse;
-import com.example.plusproject.domain.order.entity.Order;
 import com.example.plusproject.domain.order.model.request.OrderCreateRequest;
 import com.example.plusproject.domain.order.model.response.OrderCreateResponse;
 import com.example.plusproject.domain.order.model.response.OrderPageResponse;
+import com.example.plusproject.domain.order.model.response.OrderResponse;
 import com.example.plusproject.domain.order.model.response.OrderReadResponse;
 import com.example.plusproject.domain.order.service.OrderService;
 import com.example.plusproject.domain.search.service.SearchService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Or;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -93,28 +84,57 @@ public class OrderController {
     /**
      * 검색 - v1
      */
-    @GetMapping("/searchV1")
-    public ResponseEntity<CommonResponse<Page<OrderPageResponse>>> searchV1(
-            @RequestParam String keyword,
-            @PageableDefault(page = 0, size = 10) Pageable pageable) {
-
-        Page<OrderPageResponse> response = orderService.searchV1(keyword, pageable);
-
-        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V1 조회 성공", response));
-    }
+//    @GetMapping("/searchV1")
+//    public ResponseEntity<CommonResponse<Page<OrderPageResponse>>> searchV1(
+//            @RequestParam String keyword,
+//            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+//
+//        Page<OrderPageResponse> response = orderService.searchV1(keyword, pageable);
+//
+//        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V1 조회 성공", response));
+//    }
 
 
     /**
      * 검색 - v2
      */
-    @GetMapping("/searchV2")
-    public ResponseEntity<CommonResponse<Page<OrderPageResponse>>> searchV2(
+    @GetMapping("/searchV3")
+    public ResponseEntity<CommonResponse<OrderPageResponse<OrderResponse>>> searchV3(
             @RequestParam String keyword,
-            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+            Pageable pageable
+    ) {
+        OrderPageResponse<OrderResponse> response = orderService.searchV3(keyword, pageable);
 
-        Page<OrderPageResponse> response = orderService.searchV2(keyword, pageable);
+        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V3 조회 성공", response));
+    }
+
+
+
+    /**
+     * 검색 - v2
+     */
+    /*
+    @GetMapping("/searchV2")
+    public ResponseEntity<CommonResponse<List<OrderResponse>>> searchV2(
+            @RequestParam String keyword
+    ) {
+        List<OrderResponse> response = orderService.searchV2(keyword);
 
         return ResponseEntity.ok(CommonResponse.success("주문 검색 - V2 조회 성공", response));
     }
+*/
+
+
+
+//    @GetMapping("/searchV2")
+//    public ResponseEntity<CommonResponse<Page<OrderPageResponse>>> searchV2(
+//            @RequestParam String keyword,
+//            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+//
+////        Page<OrderPageResponse> response = orderService.searchV2(keyword, pageable);
+//        List<OrderPageResponse> response = orderService.searchV2(keyword);
+//
+//        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V2 조회 성공", response));
+//    }
 
 }

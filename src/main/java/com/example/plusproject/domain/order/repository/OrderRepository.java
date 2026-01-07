@@ -5,9 +5,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OrderRepository extends JpaRepository<Order, Long>, OrderCustomRepository {
-    Page<Order> findAllByProduct_NameContaining(String keyword, Pageable pageable);
+import java.util.List;
 
-//    Page<Order> findAllByUser_IdAndProduct_NameContaining(Long userId, String keyword, Pageable pageable);
+public interface OrderRepository extends JpaRepository<Order, Long>, OrderCustomRepository {
+    // v2
+//    List<Order> findAllByProduct_NameContaining(String keyword);
+
+    // v3
+    Page<Order> findAllByProduct_NameContaining(String keyword, Pageable pageable);
 
 }
