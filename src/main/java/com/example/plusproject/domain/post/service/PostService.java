@@ -3,6 +3,7 @@ package com.example.plusproject.domain.post.service;
 import com.example.plusproject.common.enums.ExceptionCode;
 import com.example.plusproject.common.exception.CustomException;
 import com.example.plusproject.common.model.AuthUser;
+import com.example.plusproject.domain.comment.model.CommentDto;
 import com.example.plusproject.domain.comment.model.response.CommentReadResponse;
 import com.example.plusproject.domain.comment.repository.CommentRepository;
 import com.example.plusproject.domain.post.entity.Post;
@@ -61,6 +62,7 @@ public class PostService {
         List<CommentReadResponse> comments = commentRepository
                 .findAllByPostIdOrderByCreatedAtDesc(postId)
                 .stream()
+                .map(CommentDto::from)
                 .map(CommentReadResponse::from)
                 .toList();
 
