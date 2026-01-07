@@ -86,29 +86,29 @@ public class OrderController {
     /**
      * 검색 - v1
      */
-//    @GetMapping("/searchV1")
-//    public ResponseEntity<CommonResponse<OrderPageResponse<OrderResponse>>> searchV1(
-//            @RequestParam String keyword,
-//            @PageableDefault(page = 0, size = 10) Pageable pageable) {
-//
-//        OrderPageResponse<OrderResponse> response = orderService.searchV1(keyword, pageable);
-//
-//        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V1 조회 성공", response));
-//    }
+    @GetMapping("/searchV1")
+    public ResponseEntity<CommonResponse<OrderPageResponse<OrderResponse>>> searchV1(
+            @RequestParam String keyword,
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+
+        OrderPageResponse<OrderResponse> response = orderService.searchV1(keyword, pageable);
+
+        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V1 조회 성공", response));
+    }
 
 
     /**
      * 검색 - v2
      */
-//    @GetMapping("/searchV2")
-//    public ResponseEntity<CommonResponse<List<OrderResponse>>> searchV2(
-//            @RequestParam String keyword,
-//            @PageableDefault(page = 0, size = 10) Pageable pageable) {
-//
-//        List<OrderResponse> response = orderService.searchV2(keyword, pageable);
-//
-//        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V2 조회 성공", response));
-//    }
+    @GetMapping("/searchV2")
+    public ResponseEntity<CommonResponse<Page<OrderResponse>>> searchV2(
+            @RequestParam String keyword,
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+
+        Page<OrderResponse> response = orderService.searchV2(keyword, pageable);
+
+        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V2 조회 성공", response));
+    }
 
 
 

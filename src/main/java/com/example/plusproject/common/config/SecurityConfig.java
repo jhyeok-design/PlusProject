@@ -53,7 +53,7 @@ public class SecurityConfig {
                         .permitAll()
                     //상품에 대한 CUD 는 ADMIN 만 가능
                     .requestMatchers(("/api/products/**")).hasRole("ADMIN")
-                        .requestMatchers("/api/orders/searchV1").hasRole("ADMIN")
+                        .requestMatchers("/api/orders/searchV1", "/api/orders/searchV2", "/api/orders/searchV3").permitAll()
                     //이 외 인증 필요
                     .anyRequest().authenticated()
                 )
