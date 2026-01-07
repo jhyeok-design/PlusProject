@@ -144,33 +144,32 @@ public class OrderService {
     /**
      * 검색 - v1
      */
-//    @Transactional(readOnly = true)
-//    public OrderPageResponse<OrderResponse> searchV1(String keyword, Pageable pageable) {
-//
-//        Page<Order> orderPage = orderRepository.findAllByProduct_NameContaining(keyword, pageable);
-//
-//        Page<OrderResponse> orderResponsePage = orderPage.map(OrderResponse::from);
-//
-//        return new OrderPageResponse<>(orderResponsePage);
-//    }
+    @Transactional(readOnly = true)
+    public OrderPageResponse<OrderResponse> searchV1(String keyword, Pageable pageable) {
+
+        Page<Order> orderPage = orderRepository.findAllByProduct_NameContaining(keyword, pageable);
+
+        Page<OrderResponse> orderResponsePage = orderPage.map(OrderResponse::from);
+
+        return new OrderPageResponse<>(orderResponsePage);
+    }
 
 
     /**
      * 검색 - v2
      */
-//    @Cacheable(value = "orderCache",
-//            key = "'keyword: ' + #keyword + ':page:' + #pageable.pageNumber")
-//    @Transactional(readOnly = true)
-//    public List<OrderResponse> searchV2(String keyword, Pageable pageable) {
-//
-//        log.info("Redis Cache Miss {} ", keyword);
-//
-//        Page<Order> orderPage = orderRepository.findAllByProduct_NameContaining(keyword, pageable);
-//
-//        return orderPage.getContent().stream()
-//                .map(OrderResponse::from)
-//                .toList();
-//    }
+    @Cacheable(value = "orderCache",
+            key = "'keyword: ' + #keyword + ':page:' + #pageable.pageNumber", condition = "#pageable.pageNumber == 0")
+    @Transactional(readOnly = true)
+    public Page<OrderResponse> searchV2(String keyword, Pageable pageable) {
+
+        log.info("Redis Cache Miss {} ", keyword);
+
+        Page<Order> orderPage = orderRepository.findAllByProduct_NameContaining(keyword, pageable);
+
+       return orderPage.map(OrderResponse::from);
+
+    }
 
 
 
