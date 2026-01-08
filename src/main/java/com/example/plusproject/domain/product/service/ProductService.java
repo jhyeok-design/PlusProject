@@ -37,17 +37,16 @@ public class ProductService {
     @Transactional
     public ProductCreateResponse createProduct(ProductCreateRequest request, MultipartFile image) {
 
-        String imageUrl = null;
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException("이미지 파일이 필요합니다.");}
 
-        if (image != null && !image.isEmpty()) {
-            imageUrl = s3Service.uploadImage(image);
-        }
+        String imageUrl = s3Service.uploadImage(image);
 
         boolean existsName = productRepository.existsByName(request.getName());
 
         if (existsName) throw new CustomException(ExceptionCode.EXISTS_PRODUCT_NAME);
 
-        Product product = new Product(request.getName(), request.getPrice(), request.getDescription(), request.getQuantity());
+        Product product = new Product(request.getName(), request.getPrice(), request.getDescription(), request.getQuantity(), imageUrl);
 
         Product savedProduct = productRepository.save(product);
 

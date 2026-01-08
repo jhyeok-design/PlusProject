@@ -24,6 +24,7 @@ public class S3Service {
     private String bucket;
 
     public String uploadImage(MultipartFile file) {
+
         try {
             // 원본 파일명 추출
             String originalFilename = file.getOriginalFilename();
@@ -38,7 +39,7 @@ public class S3Service {
             }
 
             // S3에 저장할 고유한 파일명 생성 (UUID + 확장자)
-            String key = "users/" + UUID.randomUUID() + fileExtension;
+            String key = "products/" + UUID.randomUUID() + fileExtension;
 
             // S3 파일 업로드 요청 생성
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -62,8 +63,11 @@ public class S3Service {
 
     // 파일 확장자 추출 메서드
     private String getFileExtension(String filename) {
+
         int lastDotIndex = filename.lastIndexOf('.');
+
         if (lastDotIndex == -1) {
+
             return "";
         }
         return filename.substring(lastDotIndex);
@@ -71,7 +75,9 @@ public class S3Service {
 
     // 이미지 파일 확인 메서드
     private boolean isImageFile(String fileExtension) {
+
         String lowerExtension = fileExtension.toLowerCase();
+
         return lowerExtension.equals(".jpg") ||
                 lowerExtension.equals(".jpeg") ||
                 lowerExtension.equals(".png") ||

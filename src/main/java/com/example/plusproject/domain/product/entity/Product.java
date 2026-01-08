@@ -41,11 +41,12 @@ public class Product extends BaseEntity {
     private String imageUrl;
 
 
-    public Product(String name, Long price, String description, Long quantity){
+    public Product(String name, Long price, String description, Long quantity, String imageUrl) {
         this.name = name;
         this.price = price;
         this.description = description;
         this.quantity = quantity;
+        this.imageUrl = imageUrl;
     }
 
     public void update(ProductUpdateRequest request) {

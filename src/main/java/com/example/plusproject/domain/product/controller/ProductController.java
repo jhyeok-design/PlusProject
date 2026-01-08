@@ -30,7 +30,7 @@ public class ProductController {
      * 상품 생성
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<CommonResponse<ProductCreateResponse>> createProduct(@Valid @RequestBody ProductCreateRequest request, @RequestPart("file") MultipartFile image) {
+    public ResponseEntity<CommonResponse<ProductCreateResponse>> createProduct(@Valid @RequestPart ProductCreateRequest request, @RequestPart("file") MultipartFile image) {
 
         ProductCreateResponse response = productService.createProduct(request, image);
 
