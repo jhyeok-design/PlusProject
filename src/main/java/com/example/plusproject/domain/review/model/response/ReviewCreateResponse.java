@@ -19,7 +19,6 @@ public class ReviewCreateResponse {
     private final LocalDateTime updatedAt;
 
     public static ReviewCreateResponse from(ReviewDto reviewDto) {
-
         return new ReviewCreateResponse(
                 reviewDto.getId(),
                 reviewDto.getUser().getId(),
@@ -30,5 +29,4 @@ public class ReviewCreateResponse {
                 reviewDto.getUpdatedAt()
         );
     }
-
 }

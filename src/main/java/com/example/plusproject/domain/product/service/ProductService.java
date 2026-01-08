@@ -26,9 +26,7 @@ public class ProductService {
     private final ProductCacheService productCacheService;
 
     /**
-     * 상품 생성
-     * - ADMIN 권한을 가진 사용자만 상품을 생성.
-     * - 상품명은 중복될 수 없음.
+     * 상품 생성 - 관리자 권한
      */
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
@@ -45,12 +43,10 @@ public class ProductService {
         ProductCreateResponse response = ProductCreateResponse.from(ProductDto.from(savedProduct));
 
         return response;
-
     }
 
     /**
      * 상품 단건 조회
-     * - 사용자 모두 조회 가능
      */
     @Transactional(readOnly = true)
     public ProductReadResponse readProduct(Long productId) {
@@ -64,7 +60,6 @@ public class ProductService {
 
     /**
      * 상품명 검색 v2
-     * - 사용자 모두 조회 가능
      */
 //    @Cacheable(value = "productCache", key = "'productName :' + #name")
     @Transactional(readOnly = true)
@@ -89,7 +84,6 @@ public class ProductService {
 
     /**
      * 상품 전체 조회
-     * - 사용자 모두 조회 가능
      */
     @Transactional(readOnly = true)
     public List<ProductReadResponse> readAllProduct() {
@@ -102,8 +96,7 @@ public class ProductService {
     }
 
     /**
-     * 상품 수정
-     * - ADMIN 권한을 가진 사용자만 상품을 수정.
+     * 상품 수정 - 관리자 권한
      */
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
@@ -119,8 +112,7 @@ public class ProductService {
     }
 
     /**
-     * 상품 삭제
-     * - ADMIN 권한을 가진 사용자만 상품을 삭제.
+     * 상품 삭제 - 관리자 권한
      */
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
@@ -131,7 +123,9 @@ public class ProductService {
         product.softDelete();
     }
 
-
+    /**
+     * 상품 여부 확인
+     */
     private Product readProductIdOrException(Long productId) {
 
         return productRepository.findById(productId)

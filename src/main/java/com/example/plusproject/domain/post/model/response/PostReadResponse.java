@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @RequiredArgsConstructor
-public class PostReadResponse implements Serializable{
+public class PostReadResponse implements Serializable {
 
     private final Long id;
     private final Long userId;

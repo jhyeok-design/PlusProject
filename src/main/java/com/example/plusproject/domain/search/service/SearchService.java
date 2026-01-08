@@ -29,12 +29,12 @@ public class SearchService {
         search.increaseCount();
     }
 
-
     /**
      * 인기 검색어
      */
     @Transactional(readOnly = true)
     public Page<Search> getPopularKeywords(Pageable pageable) {
+
         return searchRepository.findAllByOrderByCountDesc(pageable);
     }
 
@@ -42,17 +42,8 @@ public class SearchService {
      * 상품 검색
      */
     @Transactional
-    public Page<ProductReadResponse> readProductBySearchQuery(
-            Pageable pageable,
-            String name,
-            Long price
-    ) {
-        // 1. 서치쿼리에 보낸 후 리턴
-        return productCustomRepository.readProductBySearchQuery(
-                pageable,
-                name,
-                price
-        );
+    public Page<ProductReadResponse> readProductBySearchQuery(Pageable pageable, String name, Long price) {
 
+        return productCustomRepository.readProductBySearchQuery(pageable, name, price);
     }
 }
