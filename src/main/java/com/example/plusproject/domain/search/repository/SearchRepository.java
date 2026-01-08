@@ -8,7 +8,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface SearchRepository extends JpaRepository<Search, Long> {
+
     Optional<Search> findByKeyword(String keyword);
 
     Page<Search> findAllByOrderByCountDesc(Pageable pageable);
+
+    boolean existsByKeyword(String keyword);
+
 }

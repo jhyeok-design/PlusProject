@@ -1,8 +1,6 @@
 package com.example.plusproject.domain.order.model.response;
 
 import com.example.plusproject.domain.order.model.OrderDto;
-import com.example.plusproject.domain.user.entity.User;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

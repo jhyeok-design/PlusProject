@@ -14,6 +14,7 @@ import static com.example.plusproject.domain.comment.entity.QComment.comment;
 
 @RequiredArgsConstructor
 public class CommentRepositoryImpl implements CommentCustomRepository {
+
     private final JPAQueryFactory queryFactory;
 
     @Override

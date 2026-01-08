@@ -1,10 +1,11 @@
 package com.example.plusproject.domain.auth.model.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthLoginResponse {
-    String token;
+
+    private final String token;
 }

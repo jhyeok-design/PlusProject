@@ -39,9 +39,9 @@ public class OrderBatchRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        jdbcTemplate.execute("DELETE FROM posts");
+//        jdbcTemplate.execute("DELETE FROM posts");
         jdbcTemplate.execute("DELETE FROM orders");
-        jdbcTemplate.execute("DELETE FROM users");
+//        jdbcTemplate.execute("DELETE FROM users");
 
         // 유저 10명 새로 생성
         for (int i = 1; i <= 10; i++) {
@@ -111,5 +111,3 @@ public class OrderBatchRepositoryTest {
         System.out.println("총 소요 시간(ms): " + (end - start));
     }
 }
-
-

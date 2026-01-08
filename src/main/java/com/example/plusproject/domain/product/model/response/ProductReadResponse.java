@@ -18,7 +18,7 @@ public class ProductReadResponse {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public static ProductReadResponse from(ProductDto dto){
+    public static ProductReadResponse from(ProductDto dto) {
         return new ProductReadResponse(
                 dto.getId(),
                 dto.getName(),

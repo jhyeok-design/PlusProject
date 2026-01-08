@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    //커스텀 예외 처리
+    // 커스텀 예외 처리
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<CommonResponse<Void>> customException(CustomException e) {
 
@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(exceptionCode.getStatus()).body(response);
     }
 
-    //Valid 검증 예외 처리
+    // Valid 검증 예외 처리
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CommonResponse<Void>> methodArgumentNotValidException(MethodArgumentNotValidException e) {
 

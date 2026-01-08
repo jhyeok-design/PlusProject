@@ -8,8 +8,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -18,12 +18,10 @@ import java.util.Date;
 @Slf4j(topic = "JwtUtil")
 @Component
 public class JwtUtil {
-    //베어럴
-    public static final String BEARER_PREFIX  = "Bearer ";
-    //
+
+    public static final String BEARER_PREFIX = "Bearer ";
     public static final String AUTHORIZATION = "Authorization";
-    //유효시간
-    public static final long TOKEN_TIME = 60 * 60 * 1000L;
+    public static final long TOKEN_TIME = 60 * 60 * 1000L;  // 1시간
 
     @Value("${jwt.secret.key}")
     private String jwtSecretKey;
@@ -37,19 +35,19 @@ public class JwtUtil {
         this.jwtParser = Jwts.parser().verifyWith(secretKey).build();
     }
 
-    //토큰 생성
+    // 토큰 생성
     public String generateToken(Long userId, UserRole userRole) {
         Date now = new Date();
         return Jwts.builder()
                 .subject(userId.toString())
-                .claim("userRole",userRole)
+                .claim("userRole", userRole)
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + TOKEN_TIME))
                 .signWith(secretKey, Jwts.SIG.HS256)
                 .compact();
     }
 
-    //토큰 검증
+    // 토큰 검증
     public boolean validateToken(String token) {
         if (token == null || token.isBlank()) {
             return false;
@@ -62,7 +60,7 @@ public class JwtUtil {
         }
     }
 
-    //복호화
+    // 복호화
     public Claims extractAllClaims(String token) {
         return jwtParser.parseSignedClaims(token).getPayload();
     }
@@ -76,12 +74,4 @@ public class JwtUtil {
         return UserRole.valueOf(role);
     }
 
-
-    public String getAuthorization() {
-        return AUTHORIZATION;
-    }
-
-    public String getBearerPrefix() {
-        return BEARER_PREFIX;
-    }
 }

@@ -29,87 +29,93 @@ public class ReviewController {
     private final ReviewRankingService reviewRankingService;
 
     /**
-     * 리뷰 생성 API
+     * 리뷰 생성
      */
     @PostMapping
-    public ResponseEntity<CommonResponse<ReviewCreateResponse>> createReview(
-            @AuthenticationPrincipal AuthUser authUser,
-            @Valid @RequestBody ReviewCreateRequest request) {
+    public ResponseEntity<CommonResponse<ReviewCreateResponse>> createReview(@AuthenticationPrincipal AuthUser authUser, @Valid @RequestBody ReviewCreateRequest request) {
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(CommonResponse.success("리뷰 생성 완료", reviewService.createReview(authUser, request)));
+        ReviewCreateResponse response = reviewService.createReview(authUser, request);
+
+        return ResponseEntity.ok(CommonResponse.success("리뷰 생성 완료", response));
     }
 
     /**
-     * 리뷰 단 건 조회 API
+     * 리뷰 단건 조회
      */
     @GetMapping("/{reviewId}")
     public ResponseEntity<CommonResponse<ReviewReadResponse>> readReview(@PathVariable Long reviewId) {
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(CommonResponse.success("리뷰 단 건 조회 완료", reviewService.readReview(reviewId)));
+        ReviewReadResponse response = reviewService.readReview(reviewId);
+
+        return ResponseEntity.ok(CommonResponse.success("리뷰 단 건 조회 완료", response));
     }
 
     /**
-     * 상품 별 리뷰 전체 조회 API v2
+     * 상품별 리뷰 전체 조회
      */
     @GetMapping
-    public ResponseEntity<CommonResponse<Page<ReviewReadResponse>>> readReviewWithProduct(
-            @RequestParam Long productId,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer size,
-            @RequestParam(defaultValue = "newest") String sort) {
+    public ResponseEntity<CommonResponse<Page<ReviewReadResponse>>> readReviewWithProduct(@RequestParam Long productId, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "newest") String sort) {
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(CommonResponse.success("상품 별 리뷰 전체 조회 완료", reviewService.readReviewWithProduct(productId, page, size, sort)));
+        Page<ReviewReadResponse> response = reviewService.readReviewWithProduct(productId, page, size, sort);
+
+        return ResponseEntity.ok(CommonResponse.success("상품 별 리뷰 전체 조회 완료", response));
     }
 
+//    /**
+//     * 유저 별 리뷰 전체 조회 (내 리뷰 전체 조회) v1
+//     */
+//    @GetMapping("/my-review")
+//    public ResponseEntity<CommonResponse<SliceResponse<ReviewReadResponse>>> readReviewWithMeV1(@AuthenticationPrincipal AuthUser authUser, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "newest") String sort) {
+//
+//        SliceResponse<ReviewReadResponse> response = reviewService.readReviewWithMeV1(authUser, keyword, page, size, sort);
+//
+//        return ResponseEntity.ok(CommonResponse.success("내 리뷰 전체 조회 완료", response));
+//    }
+
     /**
-     * 유저 별 리뷰 전체 조회 API (내 리뷰 전체 조회) v2
+     * 유저 별 리뷰 전체 조회 (내 리뷰 전체 조회) - v2 (In-memory Cache)
      */
     @GetMapping("/my-review")
-    public ResponseEntity<CommonResponse<SliceResponse<ReviewReadResponse>>> readReviewWithMe(
-            @AuthenticationPrincipal AuthUser authUser,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer size,
-            @RequestParam(defaultValue = "newest") String sort) {
+    public ResponseEntity<CommonResponse<SliceResponse<ReviewReadResponse>>> readReviewWithMeV2(@AuthenticationPrincipal AuthUser authUser, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "newest") String sort) {
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(CommonResponse.success("내 리뷰 전체 조회 완료", reviewService.readReviewWithMe(authUser, keyword, page, size, sort)));
+        SliceResponse<ReviewReadResponse> response = reviewService.readReviewWithMeV2(authUser, keyword, page, size, sort);
+
+        return ResponseEntity.ok(CommonResponse.success("내 리뷰 전체 조회 완료", response));
     }
 
+//    /**
+//     * 유저 별 리뷰 전체 조회 (내 리뷰 전체 조회) - v3 (Redis 를 이용한 Remote Cache)
+//     */
+//    @GetMapping("/my-review")
+//    public ResponseEntity<CommonResponse<SliceResponse<ReviewReadResponse>>> readReviewWithMeV3(@AuthenticationPrincipal AuthUser authUser, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "newest") String sort) {
+//
+//        SliceResponse<ReviewReadResponse> response = reviewService.readReviewWithMeV3(authUser, keyword, page, size, sort);
+//
+//        return ResponseEntity.ok(CommonResponse.success("내 리뷰 전체 조회 완료", response));
+//    }
+
+
     /**
-     * 리뷰 조회 수 순위 조회 API
+     * 리뷰 조회 수 순위 조회
      */
     @GetMapping("/popular")
     public ResponseEntity<CommonResponse<List<ReviewReadResponse>>> readPopularReviewTop10(@RequestParam Long productId) {
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(CommonResponse.success("조회수 TOP 10 리뷰 조회 완료", reviewRankingService.readPopularReviewTop10(productId)));
+        List<ReviewReadResponse> responses = reviewRankingService.readPopularReviewTop10(productId);
+        return ResponseEntity.ok(CommonResponse.success("조회수 TOP 10 리뷰 조회 완료", responses));
     }
 
     /**
-     * 리뷰 수정 API
+     * 리뷰 수정
      */
     @PatchMapping("/{reviewId}")
-    public ResponseEntity<CommonResponse<ReviewUpdateResponse>> updateReview(
-            @AuthenticationPrincipal AuthUser authUser,
-            @PathVariable Long reviewId,
-            @Valid @RequestBody ReviewUpdateRequest request) {
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(CommonResponse.success("리뷰 수정 완료", reviewService.updateReview(authUser, reviewId, request)));
+    public ResponseEntity<CommonResponse<ReviewUpdateResponse>> updateReview(@AuthenticationPrincipal AuthUser authUser, @PathVariable Long reviewId, @RequestBody ReviewUpdateRequest request) {
+        ReviewUpdateResponse response = reviewService.updateReview(authUser, reviewId, request);
+        return ResponseEntity.ok(CommonResponse.success("리뷰 수정 완료", response));
     }
 
     /**
-     * 리뷰 삭제 API
+     * 리뷰 삭제
      */
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<CommonResponse<Void>> deleteReview(
@@ -118,8 +124,6 @@ public class ReviewController {
 
         reviewService.deleteReview(authUser, reviewId);
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(CommonResponse.success("리뷰 삭제 완료", null));
+        return ResponseEntity.ok(CommonResponse.success("리뷰 삭제 완료", null));
     }
 }

@@ -42,11 +42,9 @@ public class ReviewService {
     @Transactional
     public ReviewCreateResponse createReview(AuthUser authUser, ReviewCreateRequest request) {
 
-        // 유저 존재 여부 검증 및 유저 가져오기
         User user = userRepository.findById(authUser.getUserId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
 
-        // 상품 존재 여부 검증 및 상품 가져오기
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT));
 
@@ -66,7 +64,7 @@ public class ReviewService {
      */
     @Transactional(readOnly = true)
     public ReviewReadResponse readReview(Long reviewId) {
-        
+
         Review review = getReview(reviewId);
 
         ReviewDto foundReview = ReviewDto.from(review);
@@ -97,7 +95,7 @@ public class ReviewService {
 //     * 유저 별 리뷰 전체 조회 (내 리뷰 전체 조회) v1
 //     */
 //    @Transactional(readOnly = true)
-//    public SliceResponse<ReviewReadResponse> readReviewWithMe(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
+//    public SliceResponse<ReviewReadResponse> readReviewWithMeV1(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
 //
 //        Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
 //
@@ -107,41 +105,16 @@ public class ReviewService {
 //
 //        return SliceResponse.from(response);
 //
-//    }
-
-//    /**
-//     * 유저 별 리뷰 전체 조회 (내 리뷰 전체 조회) v2
-//     * Redis 캐시로 성능 개선
-//     */
-//    @Cacheable(
-//            value = "myReviewCache",
-//            key = "'user:' + #authUser.userId + ':keyword:' + #keyword + ':page:' + #page + ':size:' + #size + ':sort:' + #sort")
-//    @Transactional(readOnly = true)
-//    public SliceResponse<ReviewReadResponse> readReviewWithMe(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
-//
-//        Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
-//
-//        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
-//
-//        Slice<ReviewReadResponse> response = reviewQueryRepository.readReviewWithMeSortBy(authUser.getUserId(), keyword, pageable, sort);
-//
-//        return SliceResponse.from(response);
 //    }
 
     /**
-     * 유저 별 리뷰 전체 조회 (내 리뷰 전체 조회) v3
-     * Redis 캐시로 성능 개선
+     * 유저 별 리뷰 전체 조회 (내 리뷰 전체 조회) - v2 (In-memory Cache)
      */
+    @Cacheable(
+            value = "myReviewCache",
+            key = "'user:' + #authUser.userId + ':keyword:' + #keyword + ':page:' + #page + ':size:' + #size + ':sort:' + #sort")
     @Transactional(readOnly = true)
-    public SliceResponse<ReviewReadResponse> readReviewWithMe(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
-
-        // Redis에서 읽기
-        SliceResponse<ReviewReadResponse> cached = reviewCacheService.readReviewWithMeCache(authUser, keyword, page, size, sort);
-
-        // Redis에 있으면 바로 리턴
-        if (cached != null) {
-            return cached;
-        }
+    public SliceResponse<ReviewReadResponse> readReviewWithMeV2(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
 
         Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
 
@@ -149,13 +122,36 @@ public class ReviewService {
 
         Slice<ReviewReadResponse> response = reviewQueryRepository.readReviewWithMeSortBy(authUser.getUserId(), keyword, pageable, sort);
 
-        SliceResponse<ReviewReadResponse> sliceResponse = SliceResponse.from(response);
-
-        // Redis에 저장
-        reviewCacheService.saveReviewWithMeCache(authUser, keyword, page, size, sort, sliceResponse);
-
-        return sliceResponse;
+        return SliceResponse.from(response);
     }
+
+//    /**
+//     * 유저 별 리뷰 전체 조회 (내 리뷰 전체 조회) - v3 (Redis 를 이용한 Remote Cache)
+//     */
+//    @Transactional(readOnly = true)
+//    public SliceResponse<ReviewReadResponse> readReviewWithMeV3(AuthUser authUser, String keyword, Integer page, Integer size, String sort) {
+//
+//        // Redis에서 읽기
+//        SliceResponse<ReviewReadResponse> cached = reviewCacheService.readReviewWithMeCache(authUser, keyword, page, size, sort);
+//
+//        // Redis에 있으면 바로 리턴
+//        if (cached != null) {
+//            return cached;
+//        }
+//
+//        Sort.Direction direction = "newest".equals(sort) ? Sort.Direction.DESC : Sort.Direction.ASC;
+//
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
+//
+//        Slice<ReviewReadResponse> response = reviewQueryRepository.readReviewWithMeSortBy(authUser.getUserId(), keyword, pageable, sort);
+//
+//        SliceResponse<ReviewReadResponse> sliceResponse = SliceResponse.from(response);
+//
+//        // Redis에 저장
+//        reviewCacheService.saveReviewWithMeCache(authUser, keyword, page, size, sort, sliceResponse);
+//
+//        return sliceResponse;
+//    }
 
     /**
      * 리뷰 수정 비즈니스 로직

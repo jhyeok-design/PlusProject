@@ -8,6 +8,7 @@ import com.example.plusproject.domain.comment.model.response.CommentCreateRespon
 import com.example.plusproject.domain.comment.model.response.CommentReadResponse;
 import com.example.plusproject.domain.comment.model.response.CommentUpdateResponse;
 import com.example.plusproject.domain.comment.service.CommentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,31 +23,51 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    /**
+     * 댓글 생성
+     *
+     */
     @PostMapping("/posts/{postId}/comments")
-    public ResponseEntity<CommonResponse<CommentCreateResponse>> createComment(@AuthenticationPrincipal AuthUser authUser, @PathVariable Long postId, @RequestBody CommentCreateRequest request) {
-        CommentCreateResponse result = commentService.createComment(authUser, postId, request);
+    public ResponseEntity<CommonResponse<CommentCreateResponse>> createComment(@PathVariable Long postId, @AuthenticationPrincipal AuthUser authUser, @Valid @RequestBody CommentCreateRequest request) {
 
-        return ResponseEntity.ok(CommonResponse.success("댓글 생성 완료", result));
+        CommentCreateResponse response = commentService.createComment(postId, authUser, request);
+
+        return ResponseEntity.ok(CommonResponse.success("댓글 생성 완료", response));
     }
 
+    /**
+     * 댓글 조회
+     *
+     */
     @GetMapping("/posts/{postId}/comments")
-    public ResponseEntity<CommonResponse<Page<CommentReadResponse>>> readCommentList(@PathVariable Long postId, @AuthenticationPrincipal AuthUser authUser,Pageable pageable) {
-        Page<CommentReadResponse> result = commentService.readCommentList(postId, authUser,pageable);
+    public ResponseEntity<CommonResponse<Page<CommentReadResponse>>> readCommentList(@PathVariable Long postId, @AuthenticationPrincipal AuthUser authUser, Pageable pageable) {
 
-        return ResponseEntity.ok(CommonResponse.success("댓글 전체 조회", result));
+        Page<CommentReadResponse> response = commentService.readCommentList(postId, authUser, pageable);
+
+        return ResponseEntity.ok(CommonResponse.success("댓글 전체 조회", response));
     }
 
+    /**
+     * 댓글 수정
+     *
+     */
     @PatchMapping("/comments/{commentId}")
     public ResponseEntity<CommonResponse<CommentUpdateResponse>> updateComment(@PathVariable Long commentId, @AuthenticationPrincipal AuthUser authUser, @RequestBody CommentUpdateRequest request) {
-        CommentUpdateResponse result = commentService.updateComment(commentId, authUser, request);
 
-        return ResponseEntity.ok(CommonResponse.success("댓글 수정 완료", result));
+        CommentUpdateResponse response = commentService.updateComment(commentId, authUser, request);
+
+        return ResponseEntity.ok(CommonResponse.success("댓글 수정 완료", response));
     }
 
+    /**
+     * 댓글 삭제
+     *
+     */
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<CommonResponse<Void>> deleteComment(@PathVariable Long commentId, @AuthenticationPrincipal AuthUser authUser) {
+
         commentService.deleteComment(commentId, authUser);
+
         return ResponseEntity.ok(CommonResponse.success("댓글 삭제 완료", null));
     }
-
 }
