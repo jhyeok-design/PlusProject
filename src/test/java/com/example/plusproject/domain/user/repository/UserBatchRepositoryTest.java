@@ -15,8 +15,8 @@ public class UserBatchRepositoryTest {
     @Autowired
     private UserBatchRepository userBatchRepository;
 
-    private static final int TOTAL_USERS = 500_000;
-    private static final int BATCH_SIZE = 1_000;
+    private static final int TOTAL_USERS = 5_000_000;
+    private static final int BATCH_SIZE = 5_000;
 
     private static final String[] LAST_NAMES = {
             "김", "이", "박", "최", "정",
