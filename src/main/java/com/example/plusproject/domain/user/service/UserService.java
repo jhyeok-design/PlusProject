@@ -109,11 +109,9 @@ public class UserService {
                                                   String name,
                                                   LocalDateTime createdAt
     ) {
-        // 1. 유저 id 조회 / 없으면 예외처리
         userRepository.findById(authUser.getUserId())
                 .orElseThrow(()->new CustomException(NOT_FOUND_USER));
 
-        // 2. 쿼리dsl 로 조회
         return userRepository.readUserByQuery(pageable, domain, name, createdAt);
     }
 
@@ -131,11 +129,10 @@ public class UserService {
                                                                String name,
                                                                LocalDateTime createdAt
     ) {
-        // 1. 유저 id 조회 / 없으면 예외처리
+
         userRepository.findById(authUser.getUserId())
                 .orElseThrow(()->new CustomException(NOT_FOUND_USER));
 
-        // 2. 쿼리dsl 로 조회
         return userRepository.readUserByQuery(pageable, domain, name, createdAt);
     }
 
@@ -149,35 +146,23 @@ public class UserService {
                                                        String name,
                                                        LocalDateTime createdAt
     ) {
-        // 1.cacheKey 생성
-        // 2. redis get
-        // 3. 있으면 => 역직렬화 => return
-        // 4. 없으면 => DB 조회
-        // 5. Redis set
-        // 6. return
-
-        //검색어 카운트 가져오기 위해 search 엔티티에서 가져옴
         searchRepository.findByKeyword(domain)
                 .orElseGet(()->searchRepository.save(new Search(domain)));
 
-        // 검색 기능 캐시키 생성
         String cacheKey = String.format(
                 USERSEARCH_PREFIX,
                 domain, name,
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
                 createdAt != null ? createdAt.toString() : "null"
-        );  //캐시 키 생성
+        );
 
-        // 검색 기능 캐시 키 가져옴
         Object cached = redisTemplate.opsForValue().get(cacheKey);
-        //cache 데이터 있을경우
 
         if (cached != null) {
 
             log.info("Redis 감지");
 
-            //cached List로 변환
             @SuppressWarnings("unchecked")  //괜찮아!
             List<UserReadResponse> content = (List<UserReadResponse>) cached;
 
@@ -189,24 +174,19 @@ public class UserService {
 
         log.info("DB 조회");
 
-        // 1. 유저 id 조회 / 없으면 예외처리
         User user = userRepository.findById(authUser.getUserId())
                 .orElseThrow(()->new CustomException(NOT_FOUND_USER));
 
-        // 2. 쿼리dsl 로 조회
         Page<UserReadResponse> result = userRepository.readUserByQuery(pageable, domain, name, createdAt);
 
-        // 3. Redis 저장
         redisTemplate.opsForValue().set(
                 cacheKey,
                 result.getContent(),
                 Duration.ofMinutes(3)
         );
 
-        // 4. 검색어 집계 + 처음 검색 시 테이블 생성
         searchService.recordSearch(domain);
 
-        // 5. 리턴
         return result;
 
     }
