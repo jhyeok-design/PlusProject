@@ -73,19 +73,19 @@ public class OrderController {
     }
 
 
+//    /**
+//     * 주문 검색 - v1
+//     */
+//    @GetMapping("/searchV1")
+//    public ResponseEntity<CommonResponse<OrderPageResponse<OrderResponse>>> searchV1(@RequestParam String keyword, @PageableDefault(page = 0, size = 10) Pageable pageable) {
+//
+//        OrderPageResponse<OrderResponse> response = orderService.searchV1(keyword, pageable);
+//
+//        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V1 조회 성공", response));
+//    }
+
     /**
-     * 검색 - v1
-     */
-    @GetMapping("/searchV1")
-    public ResponseEntity<CommonResponse<OrderPageResponse<OrderResponse>>> searchV1(@RequestParam String keyword, @PageableDefault(page = 0, size = 10) Pageable pageable) {
-
-        OrderPageResponse<OrderResponse> response = orderService.searchV1(keyword, pageable);
-
-        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V1 조회 성공", response));
-    }
-
-    /**
-     * 검색 - v2 (In-memory Cache)
+     * 주문 검색 - v2 (In-memory Cache)
      */
     @GetMapping("/searchV2")
     public ResponseEntity<CommonResponse<Page<OrderResponse>>> searchV2(@RequestParam String keyword, @PageableDefault(page = 0, size = 10) Pageable pageable) {
@@ -95,14 +95,14 @@ public class OrderController {
         return ResponseEntity.ok(CommonResponse.success("주문 검색 - V2 조회 성공", response));
     }
 
-    /**
-     * 검색 - v3 (Redis 를 이용한 Remote Cache)
-     */
-    @GetMapping("/searchV3")
-    public ResponseEntity<CommonResponse<OrderPageResponse<OrderResponse>>> searchV3(@RequestParam String keyword, Pageable pageable) {
-
-        OrderPageResponse<OrderResponse> response = orderService.searchV3(keyword, pageable);
-
-        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V3 조회 성공", response));
-    }
+//    /**
+//     * 주문 검색 - v3 (Redis 를 이용한 Remote Cache)
+//     */
+//    @GetMapping("/searchV3")
+//    public ResponseEntity<CommonResponse<OrderPageResponse<OrderResponse>>> searchV3(@RequestParam String keyword, Pageable pageable) {
+//
+//        OrderPageResponse<OrderResponse> response = orderService.searchV3(keyword, pageable);
+//
+//        return ResponseEntity.ok(CommonResponse.success("주문 검색 - V3 조회 성공", response));
+//    }
 }

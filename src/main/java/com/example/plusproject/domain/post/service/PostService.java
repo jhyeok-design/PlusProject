@@ -139,7 +139,7 @@ public class PostService {
     }
 
 //    /**
-//     * 검색 - v1
+//     * 게시글 검색 - v1
 //     */
 //    @Transactional(readOnly = true)
 //    public Page<PostReadResponse> searchPostPage(String keyword, String nickname, Pageable pageable) {
@@ -150,7 +150,7 @@ public class PostService {
 //    }
 
     /**
-     * 검색 - v2 (In-memory Cache)
+     * 게시글 검색 - v2 (In-memory Cache)
      */
     @Cacheable(value = "postCache",
             key = "'keyword=' + (#keyword != null ? #keyword : 'ALL') + " +
@@ -166,7 +166,7 @@ public class PostService {
     }
 
 //    /**
-//     * 검색 - v3 (Redis 를 이용한 Remote Cache)
+//     * 게시글 검색 - v3 (Redis 를 이용한 Remote Cache)
 //     */
 //    @Transactional(readOnly = true)
 //    public Page<PostReadResponse> searchPostPageV3(String keyword, String nickname, Pageable pageable) {

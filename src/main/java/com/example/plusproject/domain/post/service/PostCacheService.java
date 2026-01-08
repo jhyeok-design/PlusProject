@@ -38,7 +38,7 @@ public class PostCacheService {
 
         Set<String> keys = redisTemplate.keys("post:*");
 
-        if (keys != null && !keys.isEmpty()) {
+        if (!keys.isEmpty()) {
             redisTemplate.delete(keys);
         }
     }

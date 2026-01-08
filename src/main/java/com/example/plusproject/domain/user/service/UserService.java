@@ -1,10 +1,8 @@
 package com.example.plusproject.domain.user.service;
 
-import com.example.plusproject.common.config.RedisConfig;
 import com.example.plusproject.common.exception.CustomException;
 import com.example.plusproject.common.model.AuthUser;
 import com.example.plusproject.common.util.PasswordEncoder;
-import com.example.plusproject.domain.search.entity.Search;
 import com.example.plusproject.domain.search.repository.SearchRepository;
 import com.example.plusproject.domain.search.service.SearchService;
 import com.example.plusproject.domain.user.entity.User;
@@ -19,12 +17,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -97,86 +92,56 @@ public class UserService {
         user.delete();
     }
 
-    /**
-     * 유저 검색 v1 - 아무 캐시도 사용하지 않음
-     * */
-    @Transactional(readOnly = true)
-    public Page<UserReadResponse> readUserByQuery(AuthUser authUser,
-                                                  Pageable pageable,
-                                                  String domain,
-                                                  String name,
-                                                  LocalDateTime createdAt
-    ) {
-        userRepository.findById(authUser.getUserId())
-                .orElseThrow(()->new CustomException(NOT_FOUND_USER));
-
-        return userRepository.readUserByQuery(pageable, domain, name, createdAt);
-    }
+//    /**
+//     * 유저 검색 - v1
+//     */
+//    @Transactional(readOnly = true)
+//    public Page<UserReadResponse> readUserByQuery(AuthUser authUser, Pageable pageable, String domain, String name, LocalDateTime createdAt) {
+//
+//        userRepository.findById(authUser.getUserId())
+//                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
+//
+//        return userRepository.readUserByQuery(pageable, domain, name, createdAt);
+//    }
 
     /**
-     * 유저 검색 v2 - cache 사용
-     * */
+     * 유저 검색 - v2 (In-memory Cache)
+     */
     @Cacheable(
             cacheNames = "userSearch",
             key = "T(java.util.Objects).hash(#pageable, #domain, #name, #createdAt)"
     )
     @Transactional(readOnly = true)
-    public Page<UserReadResponse> readUserByQueryInmemoryCache(AuthUser authUser,
-                                                               Pageable pageable,
-                                                               String domain,
-                                                               String name,
-                                                               LocalDateTime createdAt
-    ) {
-
-        userRepository.findById(authUser.getUserId())
-                .orElseThrow(()->new CustomException(NOT_FOUND_USER));
-
-        return userRepository.readUserByQuery(pageable, domain, name, createdAt);
-    }
-
-    /**
-     * 유저 검색 v3 - Redis 사용
-     */
-    @Transactional(readOnly = true)
-    public Page<UserReadResponse> readUserByQueryRedis(
-            AuthUser authUser,
-            Pageable pageable,
-            String domain,
-            String name,
-            LocalDateTime createdAt
-    ) {
-
-        List<UserReadResponse> cached =
-                userCacheService.get(
-                        domain,
-                        name,
-                        pageable.getPageNumber(),
-                        pageable.getPageSize(),
-                        createdAt
-                );
-
-        if (cached != null) {
-            log.info("Redis 감지");
-            return new PageImpl<>(cached, pageable, cached.size());
-        }
-
-        log.info("DB 조회");
+    public Page<UserReadResponse> readUserByQueryInMemoryCache(AuthUser authUser, Pageable pageable, String domain, String name, LocalDateTime createdAt) {
 
         userRepository.findById(authUser.getUserId())
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
-        Page<UserReadResponse> result =
-                userRepository.readUserByQuery(pageable, domain, name, createdAt);
-
-        userCacheService.set(
-                domain,
-                name,
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
-                createdAt,
-                result.getContent()
-        );
-
-        return result;
+        return userRepository.readUserByQuery(pageable, domain, name, createdAt);
     }
+
+//    /**
+//     * 유저 검색 - v3 (Redis 를 이용한 Remote Cache)
+//     */
+//    @Transactional(readOnly = true)
+//    public Page<UserReadResponse> readUserByQueryRedis(AuthUser authUser, Pageable pageable, String domain, String name, LocalDateTime createdAt) {
+//
+//        List<UserReadResponse> cached = userCacheService.readUserCache(domain, name, pageable.getPageNumber(), pageable.getPageSize(), createdAt);
+//
+//        if (cached != null) {
+//            log.info("Redis 감지");
+//            return new PageImpl<>(cached, pageable, cached.size());
+//        }
+//
+//        log.info("DB 조회");
+//
+//        userRepository.findById(authUser.getUserId())
+//                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
+//
+//        Page<UserReadResponse> result = userRepository.readUserByQuery(pageable, domain, name, createdAt);
+//
+//        userCacheService.saveUserCache(domain, name, pageable.getPageNumber(), pageable.getPageSize(), createdAt, result.getContent());
+//
+//        return result;
+//    }
 }

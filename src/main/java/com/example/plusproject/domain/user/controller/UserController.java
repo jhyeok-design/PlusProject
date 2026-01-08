@@ -56,46 +56,36 @@ public class UserController {
         return ResponseEntity.ok(CommonResponse.success("회원 탈퇴가 완료되었습니다", null));
     }
 
-    /**
-     * 유저 검색
-     */
-    @GetMapping("/search")
-    public ResponseEntity<CommonResponse<?>> readUserByQuery(@AuthenticationPrincipal AuthUser authUser, @PageableDefault(page = 0, size = 10) Pageable pageable, @RequestParam(required = false) String domain, @RequestParam(required = false) String name, @RequestParam(required = false) LocalDateTime createdAt) {
-
-        Page<UserReadResponse> response = userService.readUserByQuery(authUser, pageable, domain, name, createdAt);
-
-        return ResponseEntity.ok(CommonResponse.success(
-                "유저 목록 조회 성공",
-                response
-        ));
-    }
+//    /**
+//     * 유저 검색 - v1
+//     */
+//    @GetMapping("/search")
+//    public ResponseEntity<CommonResponse<?>> readUserByQuery(@AuthenticationPrincipal AuthUser authUser, @PageableDefault Pageable pageable, @RequestParam(required = false) String domain, @RequestParam(required = false) String name, @RequestParam(required = false) LocalDateTime createdAt) {
+//
+//        Page<UserReadResponse> response = userService.readUserByQuery(authUser, pageable, domain, name, createdAt);
+//
+//        return ResponseEntity.ok(CommonResponse.success("유저 목록 조회 성공", response));
+//    }
 
     /**
-     * 유저 검색 v-2
+     * 유저 검색 v2 (In-memory Cache)
      */
     @GetMapping("/search_v2")
-    public ResponseEntity<CommonResponse<?>> readUserByQueryInmemoryCache(@AuthenticationPrincipal AuthUser authUser, @PageableDefault(page = 0, size = 10) Pageable pageable, @RequestParam(required = false) String domain, @RequestParam(required = false) String name, @RequestParam(required = false) LocalDateTime createdAt) {
+    public ResponseEntity<CommonResponse<?>> readUserByQueryInMemoryCache(@AuthenticationPrincipal AuthUser authUser, @PageableDefault Pageable pageable, @RequestParam(required = false) String domain, @RequestParam(required = false) String name, @RequestParam(required = false) LocalDateTime createdAt) {
 
-        Page<UserReadResponse> response = userService.readUserByQueryInmemoryCache(authUser, pageable, domain, name, createdAt);
+        Page<UserReadResponse> response = userService.readUserByQueryInMemoryCache(authUser, pageable, domain, name, createdAt);
 
-        return ResponseEntity.ok(CommonResponse.success(
-                "유저 목록 조회 성공",
-                response
-        ));
+        return ResponseEntity.ok(CommonResponse.success("유저 목록 조회 성공", response));
     }
 
-    /**
-     * 유저 검색 v-3
-     */
-    @GetMapping("/search_v3")
-    public ResponseEntity<CommonResponse<?>> readUserByQueryRedis(@AuthenticationPrincipal AuthUser authUser, @PageableDefault(page = 0, size = 10) Pageable pageable, @RequestParam(required = false) String domain, @RequestParam(required = false) String name, @RequestParam(required = false) LocalDateTime createdAt) {
-
-        Page<UserReadResponse> response = userService.readUserByQueryRedis(authUser, pageable, domain, name, createdAt);
-
-        return ResponseEntity.ok(CommonResponse.success(
-                "유저 목록 조회 성공",
-                response
-        ));
-    }
-
+//    /**
+//     * 유저 검색 - v3 (Redis 를 이용한 Remote Cache)
+//     */
+//    @GetMapping("/search_v3")
+//    public ResponseEntity<CommonResponse<?>> readUserByQueryRedis(@AuthenticationPrincipal AuthUser authUser, @PageableDefault Pageable pageable, @RequestParam(required = false) String domain, @RequestParam(required = false) String name, @RequestParam(required = false) LocalDateTime createdAt) {
+//
+//        Page<UserReadResponse> response = userService.readUserByQueryRedis(authUser, pageable, domain, name, createdAt);
+//
+//        return ResponseEntity.ok(CommonResponse.success("유저 목록 조회 성공", response));
+//    }
 }

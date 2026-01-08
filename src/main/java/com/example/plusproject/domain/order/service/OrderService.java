@@ -128,21 +128,21 @@ public class OrderService {
         order.softDelete();
     }
 
+//    /**
+//     * 주문 검색 - v1
+//     */
+//    @Transactional(readOnly = true)
+//    public OrderPageResponse<OrderResponse> searchV1(String keyword, Pageable pageable) {
+//
+//        Page<Order> orderPage = orderRepository.findAllByProduct_NameContaining(keyword, pageable);
+//
+//        Page<OrderResponse> orderResponsePage = orderPage.map(OrderResponse::from);
+//
+//        return new OrderPageResponse<>(orderResponsePage);
+//    }
+
     /**
-     * 검색 - v1
-     */
-    @Transactional(readOnly = true)
-    public OrderPageResponse<OrderResponse> searchV1(String keyword, Pageable pageable) {
-
-        Page<Order> orderPage = orderRepository.findAllByProduct_NameContaining(keyword, pageable);
-
-        Page<OrderResponse> orderResponsePage = orderPage.map(OrderResponse::from);
-
-        return new OrderPageResponse<>(orderResponsePage);
-    }
-
-    /**
-     * 검색 - v2 (In-memory Cache)
+     * 주문 검색 - v2 (In-memory Cache)
      */
     @Cacheable(value = "orderCache",
             key = "'keyword: ' + #keyword + ':page:' + #pageable.pageNumber",
@@ -157,44 +157,44 @@ public class OrderService {
         return orderPage.map(OrderResponse::from);
     }
 
-    /**
-     * 검색 - v3 (Redis 를 이용한 Remote Cache)
-     */
-    @Transactional(readOnly = true)
-    public OrderPageResponse<OrderResponse> searchV3(String keyword, Pageable pageable) {
-
-        int page = pageable.getPageNumber();
-
-        int size = pageable.getPageSize();
-
-        OrderPageResponse<OrderResponse> cached = orderCacheService.getOrderCache(keyword, page, size);
-
-        if (cached != null) {
-            log.info("Redis Cache Hit keyword={}, page={}, size={}", keyword, page, size);
-            return cached;
-        }
-
-        log.info("Redis Cache Miss keyword={}, page={}, size={}", keyword, page, size);
-
-        Page<Order> orderPage = orderRepository.findAllByProduct_NameContaining(keyword, pageable);
-
-        List<OrderResponse> content =
-                orderPage.getContent()
-                        .stream()
-                        .map(OrderResponse::from)
-                        .toList();
-
-        OrderPageResponse<OrderResponse> response =
-                new OrderPageResponse<>(
-                        content,
-                        orderPage.getNumber(),
-                        orderPage.getSize(),
-                        orderPage.getTotalElements(),
-                        orderPage.getTotalPages()
-                );
-
-        orderCacheService.saveOrderCache(keyword, page, size, response);
-
-        return response;
-    }
+//    /**
+//     * 주문 검색 - v3 (Redis 를 이용한 Remote Cache)
+//     */
+//    @Transactional(readOnly = true)
+//    public OrderPageResponse<OrderResponse> searchV3(String keyword, Pageable pageable) {
+//
+//        int page = pageable.getPageNumber();
+//
+//        int size = pageable.getPageSize();
+//
+//        OrderPageResponse<OrderResponse> cached = orderCacheService.getOrderCache(keyword, page, size);
+//
+//        if (cached != null) {
+//            log.info("Redis Cache Hit keyword={}, page={}, size={}", keyword, page, size);
+//            return cached;
+//        }
+//
+//        log.info("Redis Cache Miss keyword={}, page={}, size={}", keyword, page, size);
+//
+//        Page<Order> orderPage = orderRepository.findAllByProduct_NameContaining(keyword, pageable);
+//
+//        List<OrderResponse> content =
+//                orderPage.getContent()
+//                        .stream()
+//                        .map(OrderResponse::from)
+//                        .toList();
+//
+//        OrderPageResponse<OrderResponse> response =
+//                new OrderPageResponse<>(
+//                        content,
+//                        orderPage.getNumber(),
+//                        orderPage.getSize(),
+//                        orderPage.getTotalElements(),
+//                        orderPage.getTotalPages()
+//                );
+//
+//        orderCacheService.saveOrderCache(keyword, page, size, response);
+//
+//        return response;
+//    }
 }

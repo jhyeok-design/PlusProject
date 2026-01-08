@@ -31,5 +31,4 @@ public class UserReadResponse {
                 user.getUpdatedAt()
         );
     }
-
 }
