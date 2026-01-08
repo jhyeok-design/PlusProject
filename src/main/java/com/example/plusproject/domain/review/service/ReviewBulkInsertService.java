@@ -54,7 +54,7 @@ public class ReviewBulkInsertService {
 
         long start = System.currentTimeMillis();
 
-        int totalReview = 5_000_000;
+        int totalReview = 1_000_000; // 100만건
         int batchSize = 5_000; // 한 번에 처리할 단위
 
         for (int i = 0; i < totalReview / batchSize; i++) {
@@ -67,8 +67,8 @@ public class ReviewBulkInsertService {
 
                 int score = faker.number().numberBetween(1, 6); // 마지막 숫자 미포함 (1 ~ 5)
 
-                Long randomUserId = faker.number().numberBetween(1L, 3L);
-                Long randomProductId = faker.number().numberBetween(1L, 3L);
+                Long randomUserId = faker.number().numberBetween(1L, 5L);
+                Long randomProductId = faker.number().numberBetween(1L, 100L);
                 LocalDateTime createdAt = LocalDateTime.now();
                 LocalDateTime updatedAt = LocalDateTime.now();
 

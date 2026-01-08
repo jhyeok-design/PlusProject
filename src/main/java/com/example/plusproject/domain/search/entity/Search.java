@@ -6,8 +6,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Base64;
-
 @Entity
 @Table(name = "searches")
 @Getter

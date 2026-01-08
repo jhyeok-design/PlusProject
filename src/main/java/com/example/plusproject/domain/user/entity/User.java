@@ -16,11 +16,11 @@ import java.time.LocalDateTime;
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(
                 name = "uk_users_email",
-                columnNames =  "email"
+                columnNames = "email"
         ),
         @UniqueConstraint(
                 name = "uk_users_phone",
-                columnNames =  "phone"
+                columnNames = "phone"
         )
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -62,14 +62,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    public User(
-            String name,
-            String email,
-            String password,
-            String nickname,
-            String phone,
-            String address
-    ) {
+    public User(String name, String email, String password, String nickname, String phone, String address) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -82,15 +75,7 @@ public class User extends BaseEntity {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public User(
-            String name,
-            String email,
-            String password,
-            String nickname,
-            String phone,
-            String address,
-            UserRole userRole
-    ) {
+    public User(String name, String email, String password, String nickname, String phone, String address, UserRole userRole) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -109,9 +94,6 @@ public class User extends BaseEntity {
         this.nickname = request.getNickname() != null ? request.getNickname() : this.nickname;
         this.phone = request.getPhone() != null ? request.getPhone() : this.phone;
         this.address = request.getAddress() != null ? request.getAddress() : this.address;
-        updateModifiedAt();
-    }
-    public void updateModifiedAt() {
         this.updatedAt = LocalDateTime.now();
     }
 
@@ -119,5 +101,4 @@ public class User extends BaseEntity {
         this.isDeleted = true;
         this.updatedAt = LocalDateTime.now();
     }
-
 }

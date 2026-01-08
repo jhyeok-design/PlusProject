@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor
 public class PostDetailResponse {
+
     private final PostReadResponse post;
     private final List<CommentReadResponse> comments;
 

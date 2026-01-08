@@ -23,27 +23,23 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         jpaQueryFactory = new JPAQueryFactory(em);
     }
 
-    //도메인으로 검색
     private BooleanExpression userDomainContains(String domain) {
+
         return domain != null ? user.email.contains(domain) : null;
     }
 
-    //이름으로 검색
     private BooleanExpression userNameEqual(String name) {
+
         return name != null ? user.name.eq(name) : null;
     }
 
-    //createdAt 으로 검색
     private BooleanExpression userCreatedAtLoe(LocalDateTime createdAt) {
+
         return createdAt != null ? user.createdAt.loe(createdAt) : null;
     }
 
     @Override
-    public Page<UserReadResponse> readUserByQuery(Pageable pageable,
-                                                  String domain,
-                                                  String name,
-                                                  LocalDateTime createdAt
-    ) {
+    public Page<UserReadResponse> readUserByQuery(Pageable pageable, String domain, String name, LocalDateTime createdAt) {
 
         List<UserDto> result = jpaQueryFactory
                 .select(Projections.constructor(UserDto.class,
@@ -75,5 +71,4 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
 
         return new PageImpl<>(res, pageable, size);
     }
-
 }

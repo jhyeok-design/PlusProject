@@ -1,21 +1,23 @@
 package com.example.plusproject.domain.user.model.response;
+
 import com.example.plusproject.domain.user.model.UserDto;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserReadResponse {
-    private Long id;
-    private String email;
-    private String name;
-    private String nickname;
-    private String phone;
-    private String address;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+
+    private final Long id;
+    private final String email;
+    private final String name;
+    private final String nickname;
+    private final String phone;
+    private final String address;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
 
     public static UserReadResponse from(UserDto user) {
         return new UserReadResponse(
@@ -29,5 +31,4 @@ public class UserReadResponse {
                 user.getUpdatedAt()
         );
     }
-
 }

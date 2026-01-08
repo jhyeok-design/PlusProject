@@ -21,7 +21,6 @@ public class ReviewReadResponse {
     private final LocalDateTime updatedAt;
 
     public static ReviewReadResponse from(ReviewDto reviewDto) {
-
         return new ReviewReadResponse(
                 reviewDto.getId(),
                 reviewDto.getUser().getId(),

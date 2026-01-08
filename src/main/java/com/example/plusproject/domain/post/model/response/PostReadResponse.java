@@ -4,11 +4,12 @@ import com.example.plusproject.domain.post.model.PostDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @RequiredArgsConstructor
-public class PostReadResponse {
+public class PostReadResponse implements Serializable {
 
     private final Long id;
     private final Long userId;

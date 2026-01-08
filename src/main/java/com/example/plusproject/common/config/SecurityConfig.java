@@ -1,7 +1,6 @@
 package com.example.plusproject.common.config;
 
 import com.example.plusproject.common.filter.JwtFilter;
-import com.example.plusproject.common.model.CommonResponse;
 import com.example.plusproject.common.model.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,13 +21,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
+
     private final JwtFilter jwtFilter;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                // csrf 빌활성화
+                // csrf 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
                 // 세션 차단
                 .sessionManagement(sm ->
@@ -40,7 +41,7 @@ public class SecurityConfig {
                 )
                 // 권한 설정
                 .authorizeHttpRequests(auth -> auth
-                    //auth 단은 전부 통과
+                        //auth 단은 전부 통과
                         .requestMatchers("/api/reviews/my-review").authenticated()
                         .requestMatchers("/api/auth/**").permitAll()
                         //상품, 게시판, 댓글의 GET 요청들은 전부 통과
@@ -49,13 +50,10 @@ public class SecurityConfig {
                                 "/api/reviews/**",
                                 "/api/search/**",
                                 "/api/posts/**"
-                                )
-                        .permitAll()
-                    //상품에 대한 CUD 는 ADMIN 만 가능
-                    .requestMatchers(("/api/products/**")).hasRole("ADMIN")
-                        .requestMatchers("/api/orders/searchV1").hasRole("ADMIN")
-                    //이 외 인증 필요
-                    .anyRequest().authenticated()
+                        ).permitAll()
+                        .requestMatchers(("/api/products/**")).hasRole("ADMIN")  //상품에 대한 CUD 는 ADMIN 만 가능
+                        //이 외 인증 필요
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -65,15 +63,12 @@ public class SecurityConfig {
     //인증 실패시 (401)
     @Bean
     public AuthenticationEntryPoint jwtAuthenticationEntryPoint() {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        ErrorResponse error = new ErrorResponse(401, "인증이 필요합니다.");
 
         return (request, response, authException) -> {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(
-                    objectMapper.writeValueAsString(error)
+                    objectMapper.writeValueAsString(new ErrorResponse(401, "인증이 필요합니다."))
             );
         };
     }
@@ -81,14 +76,12 @@ public class SecurityConfig {
     //인가 실패시 (403)
     @Bean
     public AccessDeniedHandler jwtAccessDeniedHandler() {
-        ObjectMapper objectMapper = new ObjectMapper();
 
-        ErrorResponse error = new ErrorResponse(403, "인가가 필요합니다.");
         return (request, response, accessDeniedException) -> {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(
-                    objectMapper.writeValueAsString(error)
+                    objectMapper.writeValueAsString(new ErrorResponse(403, "인가가 필요합니다."))
             );
         };
     }

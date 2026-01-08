@@ -46,7 +46,6 @@ public class Product extends BaseEntity {
         this.price = price;
         this.description = description;
         this.quantity = quantity;
-        this.imageUrl = imageUrl;
     }
 
     public void update(ProductUpdateRequest request) {
@@ -58,7 +57,6 @@ public class Product extends BaseEntity {
 
     public void softDelete() {this.isDeleted = true;}
 
-    // 주문시 재고 -1
     public void decreaseQuantity() {
         if (this.quantity <= 0) {
             throw new CustomException(ExceptionCode.OUT_OF_STOCK);

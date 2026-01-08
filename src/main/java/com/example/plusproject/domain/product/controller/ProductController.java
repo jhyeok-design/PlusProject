@@ -10,7 +10,6 @@ import com.example.plusproject.domain.product.service.ProductService;
 import com.example.plusproject.domain.search.service.SearchService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +33,7 @@ public class ProductController {
 
         ProductCreateResponse response = productService.createProduct(request, image);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.success("상품 생성 성공", response));
+        return ResponseEntity.ok(CommonResponse.success("상품 생성 성공", response));
     }
 
     /**
@@ -45,11 +44,11 @@ public class ProductController {
 
         ProductReadResponse response = productService.readProduct(productId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success("상품 단건 조회 성공", response));
+        return ResponseEntity.ok(CommonResponse.success("상품 단건 조회 성공", response));
     }
 
     /**
-     * 상품명 검색 v2 + Page로 반환
+     * 상품명 검색 v2
      */
     @GetMapping("/name")
     public ResponseEntity<CommonResponse<List<ProductReadResponse>>> readProductByName(@RequestParam("keyword") String name) {
@@ -59,7 +58,7 @@ public class ProductController {
 
         List<ProductReadResponse> response = productService.readProductByName(name);
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success("상품명 조회 성공", response));
+        return ResponseEntity.ok(CommonResponse.success("상품명 조회 성공", response));
     }
 
     /**
@@ -70,18 +69,18 @@ public class ProductController {
 
         List<ProductReadResponse> response = productService.readAllProduct();
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success("상품 전체 조회 성공", response));
+        return ResponseEntity.ok(CommonResponse.success("상품 전체 조회 성공", response));
     }
 
     /**
      * 상품 수정
      */
     @PatchMapping("/{productId}")
-    public ResponseEntity<CommonResponse<ProductUpdateResponse>> updateProduct(@Valid @RequestBody ProductUpdateRequest request, @PathVariable Long productId) {
+    public ResponseEntity<CommonResponse<ProductUpdateResponse>> updateProduct(@RequestBody ProductUpdateRequest request, @PathVariable Long productId) {
 
         ProductUpdateResponse response = productService.updateProduct(request, productId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success("상품 수정 성공", response));
+        return ResponseEntity.ok(CommonResponse.success("상품 수정 성공", response));
     }
 
     /**
@@ -92,7 +91,7 @@ public class ProductController {
 
         productService.deleteProduct(productId);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(CommonResponse.success("상품 삭제 성공", null));
+        return ResponseEntity.ok(CommonResponse.success("상품 삭제 성공", null));
     }
 
 }

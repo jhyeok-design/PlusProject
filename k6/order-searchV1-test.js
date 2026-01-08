@@ -4,9 +4,9 @@ import { check, sleep } from 'k6';
 export const options = {
     // 1. 부하 단계 설정 (점진적 증가 및 피크 테스트)
     stages: [
-        { duration: '10s', target: 10 },   // 워밍업: 50명까지 점진적 증가
-        { duration: '20s', target: 15 },  // 정상 부하: 100명 유지
-        { duration: '20s', target: 25 },  // 피크 부하: 200명까지 폭격
+        { duration: '10s', target: 50 },   // 워밍업: 50명까지 점진적 증가
+        { duration: '20s', target: 100 },  // 정상 부하: 100명 유지
+        { duration: '20s', target: 200 },  // 피크 부하: 200명까지 폭격
         { duration: '10s', target: 0 },    // 점진적 종료
     ],
 
