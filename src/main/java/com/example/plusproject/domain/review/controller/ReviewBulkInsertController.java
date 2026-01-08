@@ -16,6 +16,6 @@ public class ReviewBulkInsertController {
 
     @PostMapping
     public ResponseEntity<String> bulkInsertReview() {
-        return ResponseEntity.ok("500만건 데이터 생성 완료 (소요 시간: " + reviewBulkInsertService.bulkInsert() + ")");
+        return ResponseEntity.ok("100만건 데이터 생성 완료 (소요 시간: " + reviewBulkInsertService.bulkInsert() + ")");
     }
 }

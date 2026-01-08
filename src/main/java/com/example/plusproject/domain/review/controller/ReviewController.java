@@ -13,6 +13,7 @@ import com.example.plusproject.domain.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -95,7 +96,7 @@ public class ReviewController {
 
 
     /**
-     * 리뷰 조회수 조회
+     * 리뷰 조회 수 순위 조회
      */
     @GetMapping("/popular")
     public ResponseEntity<CommonResponse<List<ReviewReadResponse>>> readPopularReviewTop10(@RequestParam Long productId) {

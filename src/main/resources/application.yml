@@ -6,7 +6,7 @@ spring:
     import: optional:file:.properties[.properties]
 
   cache:
-    type: redis
+    type: caffeine
     redis:
       cache-null-values: false
       time-to-live: 60s
