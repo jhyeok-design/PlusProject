@@ -16,6 +16,8 @@ spring:
       port: 6379
       
   datasource:
+    hikari:
+      maximum-pool-size: 50
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL}
     username: ${DB_USERNAME}
