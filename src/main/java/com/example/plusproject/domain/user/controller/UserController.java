@@ -66,7 +66,7 @@ public class UserController {
 
         return ResponseEntity.ok(CommonResponse.success(
                 "유저 목록 조회 성공",
-                userService.readUserByQuery(authUser, pageable, domain, name, createdAt)
+                response
         ));
     }
 
@@ -76,11 +76,11 @@ public class UserController {
     @GetMapping("/search_v2")
     public ResponseEntity<CommonResponse<?>> readUserByQueryInmemoryCache(@AuthenticationPrincipal AuthUser authUser, @PageableDefault(page = 0, size = 10) Pageable pageable, @RequestParam(required = false) String domain, @RequestParam(required = false) String name, @RequestParam(required = false) LocalDateTime createdAt) {
 
-        Page<UserReadResponse> response = userService.readUserByQuery(authUser, pageable, domain, name, createdAt);
+        Page<UserReadResponse> response = userService.readUserByQueryInmemoryCache(authUser, pageable, domain, name, createdAt);
 
         return ResponseEntity.ok(CommonResponse.success(
                 "유저 목록 조회 성공",
-                userService.readUserByQuery(authUser, pageable, domain, name, createdAt)
+                response
         ));
     }
 
@@ -90,11 +90,11 @@ public class UserController {
     @GetMapping("/search_v3")
     public ResponseEntity<CommonResponse<?>> readUserByQueryRedis(@AuthenticationPrincipal AuthUser authUser, @PageableDefault(page = 0, size = 10) Pageable pageable, @RequestParam(required = false) String domain, @RequestParam(required = false) String name, @RequestParam(required = false) LocalDateTime createdAt) {
 
-        Page<UserReadResponse> response = userService.readUserByQuery(authUser, pageable, domain, name, createdAt);
+        Page<UserReadResponse> response = userService.readUserByQueryRedis(authUser, pageable, domain, name, createdAt);
 
         return ResponseEntity.ok(CommonResponse.success(
                 "유저 목록 조회 성공",
-                userService.readUserByQuery(authUser, pageable, domain, name, createdAt)
+                response
         ));
     }
 
