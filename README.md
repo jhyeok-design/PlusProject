@@ -134,15 +134,15 @@
 ## 📈 성능 개선
 k6 부하 테스트를 통해 주문 검색 API의 캐시 전략별(DB → 로컬 캐시 → Redis) 성능 차이를 비교하였다.
 ### <v1 - DB 조회>
-<img width="875" height="458" alt="image" src="https://github.com/user-attachments/assets/1459b406-177e-4bb6-99a5-37471fa4b00c" />
+<img width="1119" height="458" alt="image" src="https://github.com/user-attachments/assets/1459b406-177e-4bb6-99a5-37471fa4b00c" />
 <br/>
 
 ### <v2 - 로컬 캐시>
-<img width="935" height="460" alt="image" src="https://github.com/user-attachments/assets/d62e7af8-482e-4346-8b2f-129847be7fa5" />
+<img width="1125" height="548" alt="image" src="https://github.com/user-attachments/assets/22cb4772-517d-41bb-9d87-49c592d36613" />
 <br/>
 
 ### <v3 - Redis 캐시>
-<img width="969" height="467" alt="image" src="https://github.com/user-attachments/assets/59518a95-bc4a-4afe-9e4b-24bab54f9796" />
+<img width="1119" height="549" alt="image" src="https://github.com/user-attachments/assets/dc7b04d9-c711-417c-a321-db9da33fd92e" />
 <br/>
 
 <h4>
