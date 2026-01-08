@@ -1,20 +1,34 @@
 spring:
   application:
     name: PlusProject
+
   config:
     import: optional:file:.properties[.properties]
+
+  cache:
+    type: redis
+    redis:
+      cache-null-values: false
+      time-to-live: 60s
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: false
     show-sql: true
+
 jwt:
   secret:
     key: ${JWT_SECRET}
