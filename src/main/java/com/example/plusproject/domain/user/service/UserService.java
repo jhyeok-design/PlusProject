@@ -37,11 +37,10 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RedisConfig redisConfig;
-    private final RedisTemplate<String, Object> redisTemplate;
     private final SearchService searchService;
     private final SearchRepository searchRepository;
-    private final String USERSEARCH_PREFIX = "userSearch:domain=%s:name=%s:page=%d:size=%d:createdAt=%s";
+    private final UserCacheService userCacheService;
+
     /**
      * 유저 마이페이지 조회
      */
@@ -101,7 +100,6 @@ public class UserService {
     /**
      * 유저 검색 v1 - 아무 캐시도 사용하지 않음
      * */
-
     @Transactional(readOnly = true)
     public Page<UserReadResponse> readUserByQuery(AuthUser authUser,
                                                   Pageable pageable,
@@ -138,59 +136,47 @@ public class UserService {
 
     /**
      * 유저 검색 v3 - Redis 사용
-     * */
-    @Transactional
-    public Page<UserReadResponse> readUserByQueryRedis(AuthUser authUser,
-                                                       Pageable pageable,
-                                                       String domain,
-                                                       String name,
-                                                       LocalDateTime createdAt
+     */
+    @Transactional(readOnly = true)
+    public Page<UserReadResponse> readUserByQueryRedis(
+            AuthUser authUser,
+            Pageable pageable,
+            String domain,
+            String name,
+            LocalDateTime createdAt
     ) {
-        searchRepository.findByKeyword(domain)
-                .orElseGet(()->searchRepository.save(new Search(domain)));
 
-        String cacheKey = String.format(
-                USERSEARCH_PREFIX,
-                domain, name,
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
-                createdAt != null ? createdAt.toString() : "null"
-        );
-
-        Object cached = redisTemplate.opsForValue().get(cacheKey);
+        List<UserReadResponse> cached =
+                userCacheService.get(
+                        domain,
+                        name,
+                        pageable.getPageNumber(),
+                        pageable.getPageSize(),
+                        createdAt
+                );
 
         if (cached != null) {
-
             log.info("Redis 감지");
-
-            @SuppressWarnings("unchecked")  //괜찮아!
-            List<UserReadResponse> content = (List<UserReadResponse>) cached;
-
-            log.info("cached:{}",cached);
-
-            return new PageImpl<>(content, pageable, content.size());
-
+            return new PageImpl<>(cached, pageable, cached.size());
         }
 
         log.info("DB 조회");
 
-        User user = userRepository.findById(authUser.getUserId())
-                .orElseThrow(()->new CustomException(NOT_FOUND_USER));
+        userRepository.findById(authUser.getUserId())
+                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
-        Page<UserReadResponse> result = userRepository.readUserByQuery(pageable, domain, name, createdAt);
+        Page<UserReadResponse> result =
+                userRepository.readUserByQuery(pageable, domain, name, createdAt);
 
-        redisTemplate.opsForValue().set(
-                cacheKey,
-                result.getContent(),
-                Duration.ofMinutes(3)
+        userCacheService.set(
+                domain,
+                name,
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                createdAt,
+                result.getContent()
         );
 
-        searchService.recordSearch(domain);
-
         return result;
-
     }
-
-
-
 }
