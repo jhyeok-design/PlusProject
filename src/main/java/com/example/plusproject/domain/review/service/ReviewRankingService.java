@@ -54,6 +54,5 @@ public class ReviewRankingService {
         return list.stream()
                 .map(ReviewReadResponse::from)
                 .toList();
-
     }
 }

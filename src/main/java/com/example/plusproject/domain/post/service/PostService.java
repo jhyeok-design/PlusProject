@@ -36,12 +36,15 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final PostCacheService postCacheService;
 
+    /**
+     * 게시글 생성
+     */
     @Transactional
     public PostCreateResponse createPost(AuthUser authUser, PostCreateRequest request) {
 
-        User user = userRepository.findById(authUser.getUserId()).orElseThrow(
-                () -> new CustomException(ExceptionCode.NOT_FOUND_USER)
-        );
+        User user = userRepository.findById(authUser.getUserId())
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER)
+                );
 
         Post post = new Post(request.getTitle(), request.getContent(), user);
 
@@ -52,12 +55,15 @@ public class PostService {
         return PostCreateResponse.from(dto);
     }
 
+    /**
+     * 게시글 단건 조회
+     */
     @Transactional(readOnly = true)
     public PostDetailResponse readPost(Long postId) {
 
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new CustomException(ExceptionCode.NOT_FOUND_POST)
-        );
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_POST)
+                );
 
         List<CommentReadResponse> comments = commentRepository
                 .findAllByPostIdOrderByCreatedAtDesc(postId)
@@ -69,9 +75,11 @@ public class PostService {
         PostReadResponse dto = PostReadResponse.from(PostDto.from(post));
 
         return PostDetailResponse.from(dto, comments);
-
     }
 
+    /**
+     * 게시글 다건 조회
+     */
     @Transactional(readOnly = true)
     public Page<PostReadResponse> readPostList(Pageable pageable) {
 
@@ -80,6 +88,9 @@ public class PostService {
         return page.map(PostReadResponse::from);
     }
 
+    /**
+     * 게시글 수정
+     */
     @Transactional
     public PostUpdateResponse updatePost(Long postId, AuthUser authUser, PostUpdateRequest request) {
 
@@ -91,26 +102,34 @@ public class PostService {
         );
 
         PostDto dto = PostDto.from(post);
+
         postCacheService.evictPost();
+
         return PostUpdateResponse.from(dto);
     }
 
+    /**
+     * 게시글 삭제
+     */
     @Transactional
     public void deletePost(Long postId, AuthUser authUser) {
 
         Post post = getPostWithPermission(postId, authUser.getUserId());
 
         commentRepository.deleteByPostId(postId);
+
         postRepository.delete(post);
+
         postCacheService.evictPost();
     }
 
-
+    /**
+     * 권한 체크
+     */
     private Post getPostWithPermission(Long postId, Long userId) {
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new CustomException(ExceptionCode.NOT_FOUND_POST)
-        );
-
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_POST)
+                );
 
         if (!post.getUser().getId().equals(userId)) {
             throw new CustomException(ExceptionCode.NO_PERMISSION);
@@ -119,43 +138,53 @@ public class PostService {
         return post;
     }
 
-    @Transactional(readOnly = true)
-    public Page<PostReadResponse> searchPostPage(String keyword, String nickname, Pageable pageable) {
-        Page<PostDto> page = postRepository.searchByConditions(keyword, nickname, pageable);
-
-        return page.map(PostReadResponse::from);
-    }
-
-//    @Cacheable(value = "postCache",
-//            key = "'keyword=' + (#keyword != null ? #keyword : 'ALL') + " +
-//                    "', nickname=' + (#nickname != null ? #nickname : 'ALL')",
-//            condition = "#pageable.pageNumber == 0"
-//    )
+//    /**
+//     * 검색 - v1
+//     */
 //    @Transactional(readOnly = true)
-//    public Page<PostReadResponse> searchPostPageV2(String keyword, String nickname, Pageable pageable) {
+//    public Page<PostReadResponse> searchPostPage(String keyword, String nickname, Pageable pageable) {
 //
 //        Page<PostDto> page = postRepository.searchByConditions(keyword, nickname, pageable);
 //
 //        return page.map(PostReadResponse::from);
 //    }
 
+    /**
+     * 검색 - v2 (In-memory Cache)
+     */
+    @Cacheable(value = "postCache",
+            key = "'keyword=' + (#keyword != null ? #keyword : 'ALL') + " +
+                    "', nickname=' + (#nickname != null ? #nickname : 'ALL')",
+            condition = "#pageable.pageNumber == 0"
+    )
     @Transactional(readOnly = true)
-    public Page<PostReadResponse> searchPostPageV3(String keyword, String nickname, Pageable pageable) {
-
-        if (pageable.getPageNumber()==0){
-            List<PostReadResponse> cached = postCacheService.readPostCache(keyword,nickname);
-            if (cached!=null){
-                return new PageImpl<>(cached,pageable,cached.size());
-            }
-        }
+    public Page<PostReadResponse> searchPostPageV2(String keyword, String nickname, Pageable pageable) {
 
         Page<PostDto> page = postRepository.searchByConditions(keyword, nickname, pageable);
 
-        Page<PostReadResponse> result = page.map(PostReadResponse::from);
-
-        if(pageable.getPageNumber()==0){
-            postCacheService.savePostCache(keyword, nickname,result.getContent());
-        }
-        return result;
+        return page.map(PostReadResponse::from);
     }
+
+//    /**
+//     * 검색 - v3 (Redis 를 이용한 Remote Cache)
+//     */
+//    @Transactional(readOnly = true)
+//    public Page<PostReadResponse> searchPostPageV3(String keyword, String nickname, Pageable pageable) {
+//
+//        if (pageable.getPageNumber()==0){
+//            List<PostReadResponse> cached = postCacheService.readPostCache(keyword,nickname);
+//            if (cached!=null){
+//                return new PageImpl<>(cached,pageable,cached.size());
+//            }
+//        }
+//
+//        Page<PostDto> page = postRepository.searchByConditions(keyword, nickname, pageable);
+//
+//        Page<PostReadResponse> result = page.map(PostReadResponse::from);
+//
+//        if(pageable.getPageNumber()==0){
+//            postCacheService.savePostCache(keyword, nickname,result.getContent());
+//        }
+//        return result;
+//    }
 }

@@ -2,13 +2,13 @@ package com.example.plusproject.domain.user.model;
 
 import com.example.plusproject.common.enums.UserRole;
 import com.example.plusproject.domain.user.entity.User;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserDto {
 
     private final Long id;
@@ -21,7 +21,6 @@ public class UserDto {
     private final boolean isDeleted;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
-
 
     public static UserDto from(User user) {
         return new UserDto(

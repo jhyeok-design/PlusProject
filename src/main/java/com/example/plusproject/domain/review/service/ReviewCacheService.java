@@ -27,7 +27,7 @@ public class ReviewCacheService {
     public SliceResponse<ReviewReadResponse> readReviewWithMeCache(
             AuthUser authUser,
             String keyword,
-            Integer page,Integer size,
+            Integer page, Integer size,
             String sort) {
 
         String key = "user:" + authUser.getUserId() + ":keyword:" + keyword + ":page:" + page + ":size:" + size + ":sort:" + sort;
@@ -39,7 +39,8 @@ public class ReviewCacheService {
         }
 
         try {
-            return objectMapper.readValue(value, new TypeReference<>() {});
+            return objectMapper.readValue(value, new TypeReference<>() {
+            });
         } catch (JsonProcessingException e) {
             log.warn("[캐시 역직렬화 실패] DB에서 데이터 조회", e);
             return null;
@@ -52,7 +53,7 @@ public class ReviewCacheService {
     public void saveReviewWithMeCache(
             AuthUser authUser,
             String keyword,
-            Integer page,Integer size,
+            Integer page, Integer size,
             String sort,
             SliceResponse<ReviewReadResponse> response) {
 
@@ -60,11 +61,10 @@ public class ReviewCacheService {
 
         try {
             String value = objectMapper.writeValueAsString(response);
+
             redisTemplate.opsForValue().set(key, value, 10, TimeUnit.MINUTES);
         } catch (JsonProcessingException e) {
             log.warn("[직렬화 실패] 캐시 저장 건너뛰기", e);
         }
-
     }
-
 }

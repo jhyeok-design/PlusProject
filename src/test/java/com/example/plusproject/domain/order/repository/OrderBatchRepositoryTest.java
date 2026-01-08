@@ -111,5 +111,3 @@ public class OrderBatchRepositoryTest {
         System.out.println("총 소요 시간(ms): " + (end - start));
     }
 }
-
-

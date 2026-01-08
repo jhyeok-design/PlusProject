@@ -2,22 +2,22 @@ package com.example.plusproject.domain.product.model.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class ProductCreateRequest {
 
-    @NotBlank(message = "상품명은 필수입니다.")
+    @NotBlank(message = "이름을 입력해주세요.")
     private String name;
-    @NotNull
-    private Long price;
-    @NotBlank
-    private String description;
-    @NotNull
-    private Long quantity;
 
+    @NotBlank(message = "가격을 입력해주세요.")
+    private Long price;
+
+    @NotBlank(message = "설명을 입력해주세요.")
+    private String description;
+
+    @NotNull(message = "수량을 입력해주세요.")
+    private Long quantity;
 }

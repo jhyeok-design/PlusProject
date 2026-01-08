@@ -18,7 +18,7 @@ public class ProductDto {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public static ProductDto from(Product product){
+    public static ProductDto from(Product product) {
         return new ProductDto(
                 product.getId(),
                 product.getName(),

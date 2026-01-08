@@ -1,13 +1,23 @@
 package com.example.plusproject.domain.auth.model.request;
 
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class AuthLoginRequest {
+
+    @Email
+    @Pattern(
+            regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+            message = "이메일 형식이 올바르지 않습니다."
+    )
+    @NotBlank(message = "이메일을 입력해주세요")
     private String email;
+
+    @NotBlank(message = "비밀번호를 입력해주세요")
     private String password;
 }

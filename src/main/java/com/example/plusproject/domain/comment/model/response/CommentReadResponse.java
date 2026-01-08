@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @RequiredArgsConstructor
 public class CommentReadResponse {
+
     private final Long id;
     private final Long userId;
     private final Long postId;

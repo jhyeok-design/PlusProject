@@ -40,7 +40,9 @@ public class Order extends BaseEntity {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
-    public void softDelete() {this.isDeleted = true;}
+    public void softDelete() {
+        this.isDeleted = true;
+    }
 
     public Order(String productName, User user, Product product) {
         this.productName = productName;

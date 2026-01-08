@@ -16,10 +16,12 @@ import static com.example.plusproject.domain.user.entity.QUser.user;
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements CustomPostRepository {
+
     private final JPAQueryFactory queryFactory;
 
     @Override
     public Page<PostDto> findPostList(Pageable pageable) {
+
         List<PostDto> postList = queryFactory
                 .select(Projections.constructor(
                         PostDto.class,
@@ -49,6 +51,7 @@ public class PostRepositoryImpl implements CustomPostRepository {
 
     @Override
     public Page<PostDto> searchByConditions(String keyword, String nickname, Pageable pageable) {
+
         List<PostDto> postList = queryFactory
                 .select(Projections.constructor(
                         PostDto.class,
@@ -81,8 +84,8 @@ public class PostRepositoryImpl implements CustomPostRepository {
 
     }
 
-
     private BooleanExpression keywordContains(String keyword) {
+
         if (keyword == null || keyword.isBlank()) {
             return null;
         }
@@ -90,10 +93,10 @@ public class PostRepositoryImpl implements CustomPostRepository {
     }
 
     private BooleanExpression nicknameContains(String nickname) {
+
         if (nickname == null || nickname.isBlank()) {
             return null;
         }
         return user.nickname.containsIgnoreCase(nickname);
     }
-
 }

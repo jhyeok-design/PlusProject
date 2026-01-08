@@ -34,11 +34,12 @@ public class PostCacheService {
         redisTemplate.opsForValue().set(key(keyword, nickname), responses, 10, TimeUnit.MINUTES);
     }
 
-    public void evictPost(){
-        Set<String> keys =redisTemplate.keys("post:*");
-        if (keys != null && !keys.isEmpty()){
+    public void evictPost() {
+
+        Set<String> keys = redisTemplate.keys("post:*");
+
+        if (keys != null && !keys.isEmpty()) {
             redisTemplate.delete(keys);
         }
     }
-
 }

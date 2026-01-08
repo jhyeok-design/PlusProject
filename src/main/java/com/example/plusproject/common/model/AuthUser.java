@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthUser {
+
     private Long UserId;
     private UserRole role;
 }
