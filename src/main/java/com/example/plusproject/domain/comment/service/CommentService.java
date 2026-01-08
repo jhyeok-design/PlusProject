@@ -46,6 +46,7 @@ public class CommentService {
         commentRepository.save(comment);
 
         CommentDto dto = CommentDto.from(comment);
+
         return CommentCreateResponse.from(dto);
     }
 
@@ -67,6 +68,7 @@ public class CommentService {
      */
     @Transactional
     public CommentUpdateResponse updateComment(Long commentId, AuthUser authUser, CommentUpdateRequest request) {
+
         Comment comment = getCommentWithPermission(commentId, authUser.getUserId());
 
         comment.update(request.getContent());
@@ -91,9 +93,9 @@ public class CommentService {
      * 권한 체크
      */
     private Comment getCommentWithPermission(Long commentId, Long userId) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new CustomException(ExceptionCode.NOT_FOUND_COMMENT)
-        );
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_COMMENT));
 
         if (!comment.getUser().getId().equals(userId)) {
             throw new CustomException(ExceptionCode.NO_PERMISSION);
