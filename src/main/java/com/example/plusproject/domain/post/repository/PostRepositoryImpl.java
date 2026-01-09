@@ -15,7 +15,7 @@ import static com.example.plusproject.domain.post.entity.QPost.post;
 import static com.example.plusproject.domain.user.entity.QUser.user;
 
 @RequiredArgsConstructor
-public class PostRepositoryImpl implements CustomPostRepository {
+public class PostRepositoryImpl implements PostCustomRepository {
 
     private final JPAQueryFactory queryFactory;
 
