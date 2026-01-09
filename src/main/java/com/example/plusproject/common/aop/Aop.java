@@ -1,11 +1,13 @@
-package com.example.plusproject.common.filter;
+package com.example.plusproject.common.aop;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
-@Slf4j
+@Aspect
 @Component
+@Slf4j
 @RequiredArgsConstructor
-public class JwtFilter {
+public class Aop {
 }
