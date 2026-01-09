@@ -12,7 +12,6 @@ import com.example.plusproject.domain.product.model.response.ProductReadResponse
 import com.example.plusproject.domain.product.model.response.ProductUpdateResponse;
 import com.example.plusproject.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +35,8 @@ public class ProductService {
     public ProductCreateResponse createProduct(ProductCreateRequest request, MultipartFile image) {
 
         if (image == null || image.isEmpty()) {
-            throw new IllegalArgumentException("이미지 파일이 필요합니다.");}
+            throw new IllegalArgumentException("이미지 파일이 필요합니다.");
+        }
 
         String imageUrl = s3Service.uploadImage(image);
 

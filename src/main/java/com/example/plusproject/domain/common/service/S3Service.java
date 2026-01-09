@@ -1,6 +1,7 @@
 package com.example.plusproject.domain.common.service;
 
-
+import com.example.plusproject.common.enums.ExceptionCode;
+import com.example.plusproject.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -28,14 +29,16 @@ public class S3Service {
         try {
             // 원본 파일명 추출
             String originalFilename = file.getOriginalFilename();
+
             if (!StringUtils.hasText(originalFilename)) {
-                throw new IllegalArgumentException("파일 이름이 존재하지 않습니다.");
+                throw new CustomException(ExceptionCode.NOT_FOUND_FILE);
             }
 
             // 파일 확장자 추출
             String fileExtension = getFileExtension(originalFilename);
+
             if (!isImageFile(fileExtension)) {
-                throw new IllegalArgumentException("이미지 파일만 업로드 가능합니다. (jpg, jpeg, png, gif)");
+                throw new CustomException(ExceptionCode.INVALID_FILE_TYPE);
             }
 
             // S3에 저장할 고유한 파일명 생성 (UUID + 확장자)
@@ -56,8 +59,9 @@ public class S3Service {
 
             // 업로드 성공 시 파일 URL 반환
             return "https://" + bucket + ".s3.amazonaws.com/" + key;
+
         } catch (IOException | S3Exception e) {
-            throw new IllegalArgumentException("파일 업로드 중 오류가 발생했습니다: " + e.getMessage());
+            throw new CustomException(ExceptionCode.FILE_UPLOAD_FAIL);
         }
     }
 
@@ -67,9 +71,9 @@ public class S3Service {
         int lastDotIndex = filename.lastIndexOf('.');
 
         if (lastDotIndex == -1) {
-
             return "";
         }
+
         return filename.substring(lastDotIndex);
     }
 
@@ -84,4 +88,3 @@ public class S3Service {
                 lowerExtension.equals(".gif");
     }
 }
-
