@@ -10,3 +10,4 @@ public class SearchController {
 
     private final SearchService searchService;
 }
+

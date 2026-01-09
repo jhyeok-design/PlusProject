@@ -9,3 +9,4 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class JwtFilter {
 }
+

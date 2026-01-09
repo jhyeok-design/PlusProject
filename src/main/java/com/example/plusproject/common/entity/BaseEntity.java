@@ -22,3 +22,4 @@ public abstract class BaseEntity {  // 공용으로 사용할 속성들을 모�
     @LastModifiedDate
     private LocalDateTime updatedAt;   //수정일
 }
+
