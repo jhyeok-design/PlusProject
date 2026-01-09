@@ -127,6 +127,9 @@
 ## 🧩 ERD
 <img width="2096" height="1126" alt="image" src="https://github.com/user-attachments/assets/fe0e7d23-3dde-4dfa-8696-00619e2f98ce" />
 
+## 📄 API
+https://plucky-raincoat-f93.notion.site/5-IP_plus-API-2e30a0fa496d80889639ee8a9538901f?source=copy_link
+
 ## 🎨 와이어 프레임
 <img width="1950" height="1172" alt="image" src="https://github.com/user-attachments/assets/4a83d5b1-b4c2-4749-a6c5-44b273ebfd82" />
 
