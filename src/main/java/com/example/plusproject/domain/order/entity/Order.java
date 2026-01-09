@@ -52,3 +52,4 @@ public class Order extends BaseEntity {
         this.product = product;
     }
 }
+

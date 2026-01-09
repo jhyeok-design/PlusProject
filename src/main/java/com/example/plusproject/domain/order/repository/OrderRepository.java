@@ -9,3 +9,4 @@ public interface OrderRepository extends JpaRepository<Order, Long>, OrderCustom
 
     Page<Order> findAllByProduct_NameContaining(String keyword, Pageable pageable);
 }
+

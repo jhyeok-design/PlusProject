@@ -27,5 +27,4 @@ public class OrderCreateResponse {
                 orderDto.getCreatedAt()
         );
     }
-
 }

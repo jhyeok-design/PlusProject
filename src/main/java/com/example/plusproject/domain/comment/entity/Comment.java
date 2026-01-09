@@ -39,3 +39,4 @@ public class Comment extends BaseEntity {
         if (content != null && !content.isBlank()) this.content = content;
     }
 }
+

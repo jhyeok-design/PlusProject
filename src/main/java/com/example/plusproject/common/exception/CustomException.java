@@ -13,3 +13,4 @@ public class CustomException extends RuntimeException {
         this.exceptionCode = exceptionCode;
     }
 }
+

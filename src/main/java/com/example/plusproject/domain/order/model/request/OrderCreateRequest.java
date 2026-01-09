@@ -11,3 +11,4 @@ public class OrderCreateRequest {
     @NotBlank(message = "상품명을 입력해주세요")
     private String productName;
 }
+

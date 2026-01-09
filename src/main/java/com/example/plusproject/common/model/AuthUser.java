@@ -13,3 +13,4 @@ public class AuthUser {
     private Long UserId;
     private UserRole role;
 }
+

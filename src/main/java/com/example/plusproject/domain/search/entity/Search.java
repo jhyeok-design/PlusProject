@@ -30,3 +30,4 @@ public class Search extends BaseEntity {
         this.count++;
     }
 }
+

@@ -44,3 +44,4 @@ public class OrderCacheService {
         redisTemplate.opsForValue().set(key, orderResponse, 10, TimeUnit.MINUTES);
     }
 }
+

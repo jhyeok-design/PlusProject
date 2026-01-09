@@ -11,3 +11,4 @@ public class CommentCreateRequest {
     @NotBlank
     private String content;
 }
+

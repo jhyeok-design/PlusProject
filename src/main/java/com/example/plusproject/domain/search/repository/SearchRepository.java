@@ -13,3 +13,4 @@ public interface SearchRepository extends JpaRepository<Search, Long> {
 
     Page<Search> findAllByOrderByCountDesc(Pageable pageable);
 }
+

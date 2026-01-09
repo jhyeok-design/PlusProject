@@ -46,3 +46,4 @@ public class SearchController {
         return ResponseEntity.ok(CommonResponse.success("검색 완료", response));
     }
 }
+

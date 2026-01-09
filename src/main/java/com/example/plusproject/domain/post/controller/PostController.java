@@ -119,3 +119,4 @@ public class PostController {
 //        return ResponseEntity.ok(CommonResponse.success("게시글 검색 성공", response));
 //    }
 }
+

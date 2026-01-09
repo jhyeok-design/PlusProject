@@ -23,3 +23,4 @@ public class OrderBatchRepository {
         jdbcTemplate.batchUpdate(sql, batchArgs);
     }
 }
+

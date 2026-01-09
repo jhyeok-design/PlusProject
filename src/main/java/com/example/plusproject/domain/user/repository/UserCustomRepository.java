@@ -10,3 +10,4 @@ public interface UserCustomRepository {
 
     Page<UserReadResponse> readUserByQuery(Pageable pageable, String domain, String name, LocalDateTime createdAt);
 }
+

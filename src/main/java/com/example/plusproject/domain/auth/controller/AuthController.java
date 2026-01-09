@@ -45,3 +45,4 @@ public class AuthController {
         return ResponseEntity.ok(CommonResponse.success("로그인 완료", response));
     }
 }
+
