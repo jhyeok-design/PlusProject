@@ -70,7 +70,7 @@ public class User extends BaseEntity {
         this.phone = phone;
         this.address = address;
         this.isDeleted = false;
-        this.role = UserRole.ADMIN;
+        this.role = UserRole.USER;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
