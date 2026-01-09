@@ -1,10 +1,10 @@
 package com.example.plusproject.domain.order.repository;
 
 import com.example.plusproject.domain.order.entity.Order;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface OrderCustomRepository {
 
-    List<Order> findAllWithUser();
+    Page<Order> findAllWithUser(Pageable pageable);
 }

@@ -36,11 +36,16 @@ public class Product extends BaseEntity {
     @Column(nullable = false, name = "is_deleted")
     private boolean isDeleted = false;
 
-    public Product(String name, Long price, String description, Long quantity) {
+    @Column(length = 500)
+    private String imageUrl;
+
+
+    public Product(String name, Long price, String description, Long quantity, String imageUrl) {
         this.name = name;
         this.price = price;
         this.description = description;
         this.quantity = quantity;
+        this.imageUrl = imageUrl;
     }
 
     public void update(ProductUpdateRequest request) {
@@ -50,9 +55,7 @@ public class Product extends BaseEntity {
         this.quantity = request.getQuantity() != null ? request.getQuantity() : this.quantity;
     }
 
-    public void softDelete() {
-        this.isDeleted = true;
-    }
+    public void softDelete() {this.isDeleted = true;}
 
     public void decreaseQuantity() {
         if (this.quantity <= 0) {

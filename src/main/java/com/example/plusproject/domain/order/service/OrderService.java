@@ -7,7 +7,6 @@ import com.example.plusproject.domain.order.entity.Order;
 import com.example.plusproject.domain.order.model.OrderDto;
 import com.example.plusproject.domain.order.model.request.OrderCreateRequest;
 import com.example.plusproject.domain.order.model.response.OrderCreateResponse;
-import com.example.plusproject.domain.order.model.response.OrderPageResponse;
 import com.example.plusproject.domain.order.model.response.OrderReadResponse;
 import com.example.plusproject.domain.order.model.response.OrderResponse;
 import com.example.plusproject.domain.order.repository.OrderRepository;
@@ -22,9 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -92,23 +88,15 @@ public class OrderService {
      * 유저의 주문 다건 조회
      */
     @Transactional(readOnly = true)
-    public List<OrderReadResponse> readAllOrder(AuthUser authUser) {
+    public Page<OrderReadResponse> readAllOrder(AuthUser authUser, Pageable pageable) {
 
         userRepository.findById(authUser.getUserId())
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER)
-                );
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
 
-        List<Order> all = orderRepository.findAllWithUser();
+        Page<Order> response = orderRepository.findAllWithUser(pageable);
 
-        List<OrderReadResponse> responseList = new ArrayList<>();
-
-        for (Order order : all) {
-            OrderReadResponse response = OrderReadResponse.from(OrderDto.from(order));
-
-            responseList.add(response);
-        }
-
-        return responseList;
+        return response.map(order ->
+                OrderReadResponse.from(OrderDto.from(order)));
     }
 
     /**

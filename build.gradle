@@ -58,9 +58,9 @@ dependencies {
     //DataFaker
     implementation 'net.datafaker:datafaker:2.4.0'
 
-    //Cache
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
-    implementation 'com.github.ben-manes.caffeine:caffeine'
+    // AWS
+    implementation(platform("software.amazon.awssdk:bom:2.27.21"))
+    implementation("software.amazon.awssdk:s3")
 }
 
 tasks.named('test') {

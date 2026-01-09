@@ -2,6 +2,7 @@ package com.example.plusproject.domain.product.service;
 
 import com.example.plusproject.common.enums.ExceptionCode;
 import com.example.plusproject.common.exception.CustomException;
+import com.example.plusproject.domain.common.service.S3Service;
 import com.example.plusproject.domain.product.entity.Product;
 import com.example.plusproject.domain.product.model.ProductDto;
 import com.example.plusproject.domain.product.model.request.ProductCreateRequest;
@@ -11,10 +12,10 @@ import com.example.plusproject.domain.product.model.response.ProductReadResponse
 import com.example.plusproject.domain.product.model.response.ProductUpdateResponse;
 import com.example.plusproject.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductService {
 
+    private final S3Service s3Service;
     private final ProductRepository productRepository;
     private final ProductCacheService productCacheService;
 
@@ -30,13 +32,19 @@ public class ProductService {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public ProductCreateResponse createProduct(ProductCreateRequest request) {
+    public ProductCreateResponse createProduct(ProductCreateRequest request, MultipartFile image) {
+
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException("이미지 파일이 필요합니다.");
+        }
+
+        String imageUrl = s3Service.uploadImage(image);
 
         boolean existsName = productRepository.existsByName(request.getName());
 
         if (existsName) throw new CustomException(ExceptionCode.EXISTS_PRODUCT_NAME);
 
-        Product product = new Product(request.getName(), request.getPrice(), request.getDescription(), request.getQuantity());
+        Product product = new Product(request.getName(), request.getPrice(), request.getDescription(), request.getQuantity(), imageUrl);
 
         Product savedProduct = productRepository.save(product);
 
@@ -132,4 +140,3 @@ public class ProductService {
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_PRODUCT));
     }
 }
-

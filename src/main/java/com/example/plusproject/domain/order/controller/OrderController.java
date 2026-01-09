@@ -54,11 +54,11 @@ public class OrderController {
      * 유저의 주문 다건 조회
      */
     @GetMapping
-    public ResponseEntity<CommonResponse<List<OrderReadResponse>>> readAllOrder(@AuthenticationPrincipal AuthUser authUser) {
+    public ResponseEntity<CommonResponse<Page<OrderReadResponse>>> readAllOrder(@AuthenticationPrincipal AuthUser authUser, @PageableDefault(page = 0, size = 10) Pageable pageable) {
 
-        List<OrderReadResponse> responseList = orderService.readAllOrder(authUser);
+        Page<OrderReadResponse> response = orderService.readAllOrder(authUser, pageable);
 
-        return ResponseEntity.ok(CommonResponse.success("주문 다건 조회 성공", responseList));
+        return ResponseEntity.ok(CommonResponse.success("주문 다건 조회 성공", response));
     }
 
     /**

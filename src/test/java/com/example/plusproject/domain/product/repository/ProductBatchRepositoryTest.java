@@ -69,8 +69,9 @@ class ProductBatchRepositoryTest {
                 Long price = randomPrice(random);
                 String description = "상품 설명";
                 Long quantity = 500L;
+                String url = "1234";
 
-                batch.add(new Product(name, price, description, quantity));
+                batch.add(new Product(name, price, description, quantity, url));
                 count++;
             }
 
