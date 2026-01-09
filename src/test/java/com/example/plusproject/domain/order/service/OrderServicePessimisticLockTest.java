@@ -37,7 +37,7 @@ public class OrderServicePessimisticLockTest {
     void 주문_동시성_테스트_비관적락() throws Exception {
 
         User user = userRepository.save(new User("홍길동", "test@test.com", "pw", "nick", "010", "서울"));
-        Product product = productRepository.save(new Product("돌맹이", 10000L, "귀여움", 1L));
+        Product product = productRepository.save(new Product("돌맹이", 10000L, "귀여움", 1L, "efe.ec.com"));
 
         AuthUser authUser = new AuthUser(user.getId(), user.getRole());
         OrderCreateRequest request = new OrderCreateRequest("돌맹이");

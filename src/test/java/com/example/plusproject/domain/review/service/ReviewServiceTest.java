@@ -73,7 +73,7 @@ class ReviewServiceTest {
     @BeforeEach
     void setUp() {
         user = new User("홍길동", "test@test.com", "1234", "길동이", "010-1234-5678", "경기도");
-        product = new Product("화려한 돌맹이", 30000L, "눈부시게 화려한 돌맹이", 5L);
+        product = new Product("화려한 돌맹이", 30000L, "눈부시게 화려한 돌맹이", 5L, "dwwdw");
         authUser = new AuthUser(userId, UserRole.USER);
 
         request = new ReviewCreateRequest();

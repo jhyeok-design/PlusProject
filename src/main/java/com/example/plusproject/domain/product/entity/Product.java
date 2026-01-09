@@ -4,6 +4,7 @@ import com.example.plusproject.common.entity.BaseEntity;
 import com.example.plusproject.common.enums.ExceptionCode;
 import com.example.plusproject.common.exception.CustomException;
 import com.example.plusproject.domain.product.model.request.ProductUpdateRequest;
+import com.example.plusproject.domain.user.model.request.UserUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -36,7 +37,11 @@ public class Product extends BaseEntity {
     @Column(nullable = false, name = "is_deleted")
     private boolean isDeleted = false;
 
-    public Product(String name, Long price, String description, Long quantity) {
+    @Column(length = 500)
+    private String imageUrl;
+
+
+    public Product(String name, Long price, String description, Long quantity, String imageUrl) {
         this.name = name;
         this.price = price;
         this.description = description;
@@ -50,9 +55,7 @@ public class Product extends BaseEntity {
         this.quantity = request.getQuantity() != null ? request.getQuantity() : this.quantity;
     }
 
-    public void softDelete() {
-        this.isDeleted = true;
-    }
+    public void softDelete() {this.isDeleted = true;}
 
     public void decreaseQuantity() {
         if (this.quantity <= 0) {

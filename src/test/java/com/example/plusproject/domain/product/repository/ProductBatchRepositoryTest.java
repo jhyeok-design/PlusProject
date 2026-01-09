@@ -65,12 +65,13 @@ class ProductBatchRepositoryTest {
                 String prefix = PREFIXES[random.nextInt(PREFIXES.length)];
                 String baseName = PRODUCT_NAMES[random.nextInt(PRODUCT_NAMES.length)];
                 String name = prefix + " " + baseName + "_" + i;
+                String url = baseName + "_" + i;
 
                 Long price = randomPrice(random);
                 String description = "상품 설명";
                 Long quantity = 500L;
 
-                batch.add(new Product(name, price, description, quantity));
+                batch.add(new Product(name, price, description, quantity, url));
                 count++;
             }
 
