@@ -1,7 +1,11 @@
 package com.example.plusproject.domain.comment.model.request;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-public class CreateCommentRequest {
+@NoArgsConstructor
+public class CommentUpdateRequest {
+
+    private String content;
 }
