@@ -92,23 +92,15 @@ public class OrderService {
      * 유저의 주문 다건 조회
      */
     @Transactional(readOnly = true)
-    public List<OrderReadResponse> readAllOrder(AuthUser authUser) {
+    public Page<OrderReadResponse> readAllOrder(AuthUser authUser, Pageable pageable) {
 
         userRepository.findById(authUser.getUserId())
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER)
-                );
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
 
-        List<Order> all = orderRepository.findAllWithUser();
+        Page<Order> response = orderRepository.findAllWithUser(pageable);
 
-        List<OrderReadResponse> responseList = new ArrayList<>();
-
-        for (Order order : all) {
-            OrderReadResponse response = OrderReadResponse.from(OrderDto.from(order));
-
-            responseList.add(response);
-        }
-
-        return responseList;
+        return response.map(order ->
+                OrderReadResponse.from(OrderDto.from(order)));
     }
 
     /**

@@ -1,4 +1,4 @@
-# 돌보미 
+# 🗿 돌보미 
 아무것도 요구하지 않는 애완 돌을 키워보세요!
 
 ## 📌 프로젝트 소개 
@@ -12,6 +12,7 @@
 - 반려돌 구매 서비스를 제공하는 웹 사이트의 백엔드 API 개발
 - RESTful API 설계 및 구현 역량을 검증하기 위해 진행
 - 단순 기능 구현을 넘어서 사용자 경험 향상을 위한 성능 개선 목표
+- k6를 활용한 부하 테스트를 통해 API 성능을 검증하고 병목 구간을 분석
 
 ## 🗓 개발 기간 
 25.12.31 ~ 26.01.08
@@ -19,13 +20,15 @@
 ## 🛠 기술 스택 
 - Java 17
 - Spring Boot 3.5.8
-- Postman
-- JUnit5
-- Docker
 - MySQL 8.0
 - JPA
 - QueryDSL 5.0.0
+- Docker
 - Redis 8.4.0
+- Postman
+- JUnit5
+- Grafana k6
+- AWS S3
 
 ## 🗂 프로젝트 구조 
 ```
@@ -103,7 +106,7 @@
 ## ⭐ 핵심 기능
 ### 🛍 애완 돌 쇼핑
 - 애완 돌 목록 조회
-- 애완 돌 상세 정보 확인
+- 애완 돌 상세 정보 조회
 - 애완 돌 구매 기능
 
 ### 🔍 애완 돌 검색
@@ -127,7 +130,29 @@
 ## 🎨 와이어 프레임
 <img width="1950" height="1172" alt="image" src="https://github.com/user-attachments/assets/4a83d5b1-b4c2-4749-a6c5-44b273ebfd82" />
 
+
+## 📈 성능 개선
+k6 부하 테스트를 통해 주문 검색 API의 캐시 전략별(DB → 로컬 캐시 → Redis) 성능 차이를 비교하였다.
+### <v1 - DB 조회>
+<img width="1119" height="458" alt="image" src="https://github.com/user-attachments/assets/1459b406-177e-4bb6-99a5-37471fa4b00c" />
+<br/>
+
+### <v2 - 로컬 캐시>
+<img width="1125" height="548" alt="image" src="https://github.com/user-attachments/assets/22cb4772-517d-41bb-9d87-49c592d36613" />
+<br/>
+
+### <v3 - Redis 캐시>
+<img width="1119" height="549" alt="image" src="https://github.com/user-attachments/assets/dc7b04d9-c711-417c-a321-db9da33fd92e" />
+<br/>
+
+<h4>
+Redis(v3)는 네트워크 I/O로 인해 단일 인스턴스 환경에서는 로컬 캐시(v2)보다 느린 응답을 보였으며,<br/> 이에 따라 현재 서비스 환경에 적합한 로컬 캐시 방식을 선택하였다.
+</h4>
+
+
+
 ## 👥 개발자
+Spring plus 팀 프로젝트 5조 ip_plus
 | 개발자 | 역할 |
 |---|---|
 | 최정윤 | 주문 CRUD, 인기 검색어, 주문 검색 기능 |
